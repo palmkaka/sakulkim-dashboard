@@ -102,12 +102,16 @@ class Auth {
                 await result.user.updateProfile({ displayName });
             }
 
+            // Check for pre-assigned role
+            const preAssignedRoles = JSON.parse(localStorage.getItem('preAssignedRoles') || '{}');
+            const assignedRole = preAssignedRoles[email.toLowerCase()] || ROLES.CUSTOMER;
+
             // Create user profile
             const profile = {
                 uid: result.user.uid,
                 email: email,
                 displayName: displayName || email.split('@')[0],
-                role: ROLES.CUSTOMER, // Default role for new users
+                role: assignedRole, // Use pre-assigned role or default to customer
                 createdAt: new Date().toISOString()
             };
 

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="สกุลกิม Dashboard - จัดการผู้ใช้">
+    <title>จัดการผู้ใช้ | สกุลกิม Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+
+    <style>
+        .user-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-4);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            flex: 1;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-bold);
+            color: white;
+        }
+
+        .user-details h4 {
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-1);
+        }
+
+        .user-details p {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+        }
+
+        .role-select {
+            min-width: 140px;
+        }
+
+        @media (max-width: 640px) {
+            .user-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .role-select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-layout">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="20" x2="12" y2="10"></line>
+                            <line x1="18" y1="20" x2="18" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="16"></line>
+                        </svg>
+                    </div>
+                    <span class="sidebar-logo-text">สกุล<span>กิม</span></span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">เมนูหลัก</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="9"></rect>
+                            <rect x="14" y="3" width="7" height="5"></rect>
+                            <rect x="14" y="12" width="7" height="9"></rect>
+                            <rect x="3" y="16" width="7" height="5"></rect>
+                        </svg>
+                        <span>แดชบอร์ด</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">ผู้ดูแลระบบ</div>
+                    <a href="users.html" class="nav-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span>จัดการผู้ใช้</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user dropdown" id="userDropdown">
+                    <div class="avatar" id="userAvatar">SK</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="userName">Loading...</div>
+                        <div class="sidebar-user-role" id="userRole">-</div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item" id="logoutBtn" style="color: var(--error);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>ออกจากระบบ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="header-toggle" id="sidebarToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <h1 class="header-title">👥 จัดการผู้ใช้</h1>
+                </div>
+                <div class="header-right">
+                    <button class="theme-toggle" id="themeToggle">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">รายชื่อผู้ใช้ทั้งหมด</h2>
+                        <p class="page-subtitle">จัดการสิทธิ์และ Role ของผู้ใช้</p>
+                    </div>
+                </div>
+
+                <!-- Add Admin Form -->
+                <div class="chart-card mb-6">
+                    <div class="chart-header">
+                        <h3 class="chart-title">➕ เพิ่มผู้ใช้ใหม่เป็น Admin</h3>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email ของผู้ใช้ที่ต้องการเพิ่ม</label>
+                        <div class="flex gap-3">
+                            <input type="email" class="form-input" id="newAdminEmail" placeholder="admin@example.com"
+                                style="flex: 1;">
+                            <select class="form-select role-select" id="newAdminRole">
+                                <option value="admin">Admin</option>
+                                <option value="manager">Manager</option>
+                                <option value="viewer">Viewer</option>
+                                <option value="customer">Customer</option>
+                            </select>
+                            <button class="btn btn-primary" id="addUserBtn">เพิ่ม</button>
+                        </div>
+                        <p class="text-sm text-muted mt-2">⚠️ ผู้ใช้ต้องสมัครสมาชิกก่อน แล้วจึงจะสามารถเพิ่ม Role ได้
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Users List -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">📋 รายชื่อผู้ใช้</h3>
+                    </div>
+                    <div id="usersList">
+                        <p class="text-center text-muted p-8">กำลังโหลด...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script src="js/config.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        firebase.initializeApp(firebaseConfig);
+
+        let currentUser = null;
+        let allUsers = [];
+
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            currentUser = user;
+            await auth.loadUserProfile(user.uid);
+
+            // Only admins can access this page
+            if (!auth.canManageUsers()) {
+                alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            updateUserUI();
+            loadAllUsers();
+        });
+
+        function updateUserUI() {
+            const profile = auth.getUserProfile();
+            document.getElementById('userName').textContent = profile?.displayName || profile?.email || 'User';
+            document.getElementById('userRole').textContent = auth.getRoleDisplayName('th');
+            document.getElementById('userAvatar').textContent = auth.getInitials();
+        }
+
+        function loadAllUsers() {
+            // Load users from localStorage (all keys starting with 'user_')
+            allUsers = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('user_')) {
+                    try {
+                        const user = JSON.parse(localStorage.getItem(key));
+                        user.uid = key.replace('user_', '');
+                        allUsers.push(user);
+                    } catch (e) { }
+                }
+            }
+
+            renderUsers();
+        }
+
+        function renderUsers() {
+            const container = document.getElementById('usersList');
+
+            if (allUsers.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted p-8">ยังไม่มีผู้ใช้ในระบบ</p>';
+                return;
+            }
+
+            const roleLabels = {
+                admin: { label: 'Admin', color: 'var(--primary-400)' },
+                manager: { label: 'Manager', color: 'var(--secondary-400)' },
+                viewer: { label: 'Viewer', color: 'var(--accent-400)' },
+                customer: { label: 'Customer', color: 'var(--text-muted)' }
+            };
+
+            container.innerHTML = allUsers.map(user => {
+                const initials = user.displayName ?
+                    user.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) :
+                    user.email ? user.email[0].toUpperCase() : 'U';
+
+                const isCurrentUser = user.uid === currentUser?.uid;
+
+                return `
+          <div class="user-card">
+            <div class="user-info">
+              <div class="user-avatar">${initials}</div>
+              <div class="user-details">
+                <h4>${user.displayName || 'ไม่ระบุชื่อ'} ${isCurrentUser ? '(คุณ)' : ''}</h4>
+                <p>${user.email || '-'}</p>
+              </div>
+            </div>
+            <select class="form-select role-select" onchange="changeRole('${user.uid}', this.value)" ${isCurrentUser ? 'disabled' : ''}>
+              <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>👑 Admin</option>
+              <option value="manager" ${user.role === 'manager' ? 'selected' : ''}>📊 Manager</option>
+              <option value="viewer" ${user.role === 'viewer' ? 'selected' : ''}>👁️ Viewer</option>
+              <option value="customer" ${user.role === 'customer' ? 'selected' : ''}>👤 Customer</option>
+            </select>
+          </div>
+        `;
+            }).join('');
+        }
+
+        function changeRole(uid, newRole) {
+            const userKey = 'user_' + uid;
+            const user = JSON.parse(localStorage.getItem(userKey));
+            if (user) {
+                user.role = newRole;
+                localStorage.setItem(userKey, JSON.stringify(user));
+                showToast(`เปลี่ยน Role เป็น ${newRole} เรียบร้อย`, 'success');
+            }
+        }
+
+        // Add new user with role (pre-register)
+        document.getElementById('addUserBtn')?.addEventListener('click', () => {
+            const email = document.getElementById('newAdminEmail').value.trim();
+            const role = document.getElementById('newAdminRole').value;
+
+            if (!email) {
+                showToast('กรุณาใส่ Email', 'error');
+                return;
+            }
+
+            // Store pre-assigned role
+            const preAssignedRoles = JSON.parse(localStorage.getItem('preAssignedRoles') || '{}');
+            preAssignedRoles[email.toLowerCase()] = role;
+            localStorage.setItem('preAssignedRoles', JSON.stringify(preAssignedRoles));
+
+            showToast(`บันทึก Role ${role} สำหรับ ${email} เรียบร้อย`, 'success');
+            document.getElementById('newAdminEmail').value = '';
+        });
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'}`;
+            toast.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000;';
+            toast.innerHTML = `<span>${message}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Theme Toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.querySelector('.sun-icon').classList.toggle('hidden');
+            document.querySelector('.moon-icon').classList.toggle('hidden');
+        });
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        if (savedTheme === 'light') {
+            document.querySelector('.sun-icon').classList.add('hidden');
+            document.querySelector('.moon-icon').classList.remove('hidden');
+        }
+
+        document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        });
+        document.getElementById('sidebarOverlay')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        });
+
+        document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+            await firebase.auth().signOut();
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('userDropdown')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('active');
+        });
+        document.addEventListener('click', () => {
+            document.getElementById('userDropdown')?.classList.remove('active');
+        });
+    </script>
+</body>
+
+</html>
