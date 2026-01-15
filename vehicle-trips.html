@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="สกุลกิม Dashboard - เที่ยวรถ">
+    <title>เที่ยวรถ | สกุลกิม Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+
+    <style>
+        .trip-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-3);
+            transition: all var(--transition-fast);
+        }
+
+        .trip-card:hover {
+            border-color: var(--secondary-500);
+            box-shadow: 0 0 0 1px var(--secondary-500);
+        }
+
+        .trip-route {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .trip-location {
+            flex: 1;
+            padding: var(--space-3);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .trip-location-label {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            margin-bottom: var(--space-1);
+        }
+
+        .trip-location-value {
+            font-weight: var(--font-semibold);
+        }
+
+        .trip-arrow {
+            color: var(--secondary-400);
+        }
+
+        .trip-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-3);
+            padding-top: var(--space-3);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .trip-stat {
+            text-align: center;
+        }
+
+        .trip-stat-value {
+            font-size: var(--text-lg);
+            font-weight: var(--font-bold);
+        }
+
+        .trip-stat-value.positive {
+            color: var(--success);
+        }
+
+        .trip-stat-value.negative {
+            color: var(--error);
+        }
+
+        .trip-stat-label {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .trip-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-layout">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="20" x2="12" y2="10"></line>
+                            <line x1="18" y1="20" x2="18" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="16"></line>
+                        </svg>
+                    </div>
+                    <span class="sidebar-logo-text">สกุล<span>กิม</span></span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">เมนูหลัก</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="9"></rect>
+                            <rect x="14" y="3" width="7" height="5"></rect>
+                            <rect x="14" y="12" width="7" height="9"></rect>
+                            <rect x="3" y="16" width="7" height="5"></rect>
+                        </svg>
+                        <span>แดชบอร์ด</span>
+                    </a>
+                    <a href="expenses.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        <span>ค่าใช้จ่าย</span>
+                    </a>
+                    <a href="vehicle-trips.html" class="nav-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2">
+                            </path>
+                            <circle cx="6.5" cy="16.5" r="2.5"></circle>
+                            <circle cx="16.5" cy="16.5" r="2.5"></circle>
+                        </svg>
+                        <span>เที่ยวรถ</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">จัดการข้อมูล</div>
+                    <a href="data-entry.html" class="nav-item" id="navDataEntry">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>เพิ่มข้อมูล</span>
+                    </a>
+                    <a href="approvals.html" class="nav-item" id="navApprovals">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span>รออนุมัติ</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user dropdown" id="userDropdown">
+                    <div class="avatar" id="userAvatar">SK</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="userName">Loading...</div>
+                        <div class="sidebar-user-role" id="userRole">-</div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item" id="logoutBtn" style="color: var(--error);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>ออกจากระบบ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="header-toggle" id="sidebarToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <h1 class="header-title">🚗 เที่ยวรถ</h1>
+                </div>
+                <div class="header-right">
+                    <div class="lang-toggle">
+                        <button class="lang-btn active" data-lang="th">TH</button>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                    </div>
+                    <button class="theme-toggle" id="themeToggle">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">บันทึกเที่ยวรถ</h2>
+                        <p class="page-subtitle">รายการเที่ยวรถและค่าใช้จ่ายน้ำมัน</p>
+                    </div>
+                    <div class="page-actions">
+                        <a href="data-entry.html" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            เพิ่มเที่ยว
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="stat-card secondary">
+                        <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="var(--secondary-400)" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2">
+                                </path>
+                                <circle cx="6.5" cy="16.5" r="2.5"></circle>
+                                <circle cx="16.5" cy="16.5" r="2.5"></circle>
+                            </svg>
+                        </div>
+                        <div class="stat-label">เที่ยวทั้งหมด</div>
+                        <div class="stat-value" id="totalTrips">24</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-label">รายได้รวม</div>
+                        <div class="stat-value" style="color: var(--success);">฿ 186,500</div>
+                    </div>
+
+                    <div class="stat-card accent">
+                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="var(--accent-400)" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-label">ค่าน้ำมันรวม</div>
+                        <div class="stat-value" style="color: var(--accent-400);">฿ 45,200</div>
+                    </div>
+                </div>
+
+                <!-- Trip List -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">รายการเที่ยวรถล่าสุด</h3>
+                    </div>
+
+                    <div id="tripsList">
+                        <!-- Sample Trip 1 -->
+                        <div class="trip-card">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <span class="badge badge-primary">🚛 กข-1234</span>
+                                    <span class="text-sm text-muted ml-2">15 ม.ค. 2569</span>
+                                </div>
+                                <span class="badge badge-success">✅ เสร็จสิ้น</span>
+                            </div>
+                            <div class="trip-route">
+                                <div class="trip-location">
+                                    <div class="trip-location-label">ต้นทาง</div>
+                                    <div class="trip-location-value">กรุงเทพ</div>
+                                </div>
+                                <div class="trip-arrow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="trip-location">
+                                    <div class="trip-location-label">ปลายทาง</div>
+                                    <div class="trip-location-value">เชียงใหม่</div>
+                                </div>
+                            </div>
+                            <div class="trip-stats">
+                                <div class="trip-stat">
+                                    <div class="trip-stat-value">685 กม.</div>
+                                    <div class="trip-stat-label">ระยะทาง</div>
+                                </div>
+                                <div class="trip-stat">
+                                    <div class="trip-stat-value negative">-฿2,500</div>
+                                    <div class="trip-stat-label">ค่าน้ำมัน</div>
+                                </div>
+                                <div class="trip-stat">
+                                    <div class="trip-stat-value positive">+฿8,500</div>
+                                    <div class="trip-stat-label">รายได้</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sample Trip 2 -->
+                        <div class="trip-card">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <span class="badge badge-secondary">🚛 ขค-5678</span>
+                                    <span class="text-sm text-muted ml-2">14 ม.ค. 2569</span>
+                                </div>
+                                <span class="badge badge-success">✅ เสร็จสิ้น</span>
+                            </div>
+                            <div class="trip-route">
+                                <div class="trip-location">
+                                    <div class="trip-location-label">ต้นทาง</div>
+                                    <div class="trip-location-value">กรุงเทพ</div>
+                                </div>
+                                <div class="trip-arrow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="trip-location">
+                                    <div class="trip-location-label">ปลายทาง</div>
+                                    <div class="trip-location-value">ขอนแก่น</div>
+                                </div>
+                            </div>
+                            <div class="trip-stats">
+                                <div class="trip-stat">
+                                    <div class="trip-stat-value">450 กม.</div>
+                                    <div class="trip-stat-label">ระยะทาง</div>
+                                </div>
+                                <div class="trip-stat">
+                                    <div class="trip-stat-value negative">-฿1,800</div>
+                                    <div class="trip-stat-label">ค่าน้ำมัน</div>
+                                </div>
+                                <div class="trip-stat">
+                                    <div class="trip-stat-value positive">+฿6,200</div>
+                                    <div class="trip-stat-label">รายได้</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sample Trip 3 -->
+                        <div class="trip-card">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <span class="badge badge-primary">🚛 กข-1234</span>
+                                    <span class="text-sm text-muted ml-2">13 ม.ค. 2569</span>
+                                </div>
+                                <span class="badge badge-success">✅ เสร็จสิ้น</span>
+                            </div>
+                            <div class="trip-route">
+                                <div class="trip-location">
+                                    <div class="trip-location-label">ต้นทาง</div>
+                                    <div class="trip-location-value">กรุงเทพ</div>
+                                </div>
+                                <div class="trip-arrow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="trip-location">
+                                    <div class="trip-location-label">ปลายทาง</div>
+                                    <div class="trip-location-value">หาดใหญ่</div>
+                                </div>
+                            </div>
+                            <div class="trip-stats">
+                                <div class="trip-stat">
+                                    <div class="trip-stat-value">950 กม.</div>
+                                    <div class="trip-stat-label">ระยะทาง</div>
+                                </div>
+                                <div class="trip-stat">
+                                    <div class="trip-stat-value negative">-฿3,500</div>
+                                    <div class="trip-stat-label">ค่าน้ำมัน</div>
+                                </div>
+                                <div class="trip-stat">
+                                    <div class="trip-stat-value positive">+฿12,000</div>
+                                    <div class="trip-stat-label">รายได้</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script src="js/config.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        firebase.initializeApp(firebaseConfig);
+
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            await auth.loadUserProfile(user.uid);
+
+            if (!auth.canViewDashboard()) {
+                window.location.href = 'my-entries.html';
+                return;
+            }
+
+            updateUserUI();
+        });
+
+        function updateUserUI() {
+            const profile = auth.getUserProfile();
+            document.getElementById('userName').textContent = profile?.displayName || profile?.email || 'User';
+            document.getElementById('userRole').textContent = auth.getRoleDisplayName('th');
+            document.getElementById('userAvatar').textContent = auth.getInitials();
+
+            document.getElementById('navDataEntry').style.display = auth.canAddData() ? 'flex' : 'none';
+            document.getElementById('navApprovals').style.display = auth.canApprove() ? 'flex' : 'none';
+        }
+
+        // Theme Toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.querySelector('.sun-icon').classList.toggle('hidden');
+            document.querySelector('.moon-icon').classList.toggle('hidden');
+        });
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        if (savedTheme === 'light') {
+            document.querySelector('.sun-icon').classList.add('hidden');
+            document.querySelector('.moon-icon').classList.remove('hidden');
+        }
+
+        document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        });
+        document.getElementById('sidebarOverlay')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        });
+
+        document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+            await firebase.auth().signOut();
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('userDropdown')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('active');
+        });
+        document.addEventListener('click', () => {
+            document.getElementById('userDropdown')?.classList.remove('active');
+        });
+    </script>
+</body>
+
+</html>
