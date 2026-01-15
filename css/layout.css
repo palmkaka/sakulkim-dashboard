@@ -162,6 +162,14 @@
     color: var(--text-muted);
 }
 
+/* Sidebar User Dropdown - Show above */
+.sidebar-footer .dropdown-menu {
+    bottom: 100%;
+    top: auto;
+    margin-bottom: var(--space-2);
+    margin-top: 0;
+}
+
 /* ===== MAIN CONTENT ===== */
 .main-content {
     flex: 1;
