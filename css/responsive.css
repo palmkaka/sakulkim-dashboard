@@ -36,6 +36,12 @@
     .header-search-input:focus {
         width: 240px;
     }
+
+    /* Prevent content overflow */
+    .page-content {
+        max-width: 100%;
+        overflow-x: auto;
+    }
 }
 
 /* ===== MOBILE (max-width: 768px) ===== */
