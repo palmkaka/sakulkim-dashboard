@@ -216,7 +216,7 @@
                                 <option value="admin">Admin</option>
                                 <option value="manager">Manager</option>
                                 <option value="viewer">Viewer</option>
-                                <option value="customer">Customer</option>
+                                <option value="customer">พนักงาน</option>
                             </select>
                             <button class="btn btn-primary" id="addUserBtn">เพิ่ม</button>
                         </div>
@@ -307,7 +307,7 @@
                 admin: { label: 'Admin', color: 'var(--primary-400)' },
                 manager: { label: 'Manager', color: 'var(--secondary-400)' },
                 viewer: { label: 'Viewer', color: 'var(--accent-400)' },
-                customer: { label: 'Customer', color: 'var(--text-muted)' }
+                customer: { label: 'พนักงาน', color: 'var(--text-muted)' }
             };
 
             container.innerHTML = allUsers.map(user => {
@@ -330,7 +330,7 @@
               <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>👑 Admin</option>
               <option value="manager" ${user.role === 'manager' ? 'selected' : ''}>📊 Manager</option>
               <option value="viewer" ${user.role === 'viewer' ? 'selected' : ''}>👁️ Viewer</option>
-              <option value="customer" ${user.role === 'customer' ? 'selected' : ''}>👤 Customer</option>
+              <option value="customer" ${user.role === 'customer' ? 'selected' : ''}>👤 พนักงาน</option>
             </select>
           </div>
         `;

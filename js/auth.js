@@ -269,7 +269,7 @@ class Auth {
             [ROLES.ADMIN]: { th: 'ผู้ดูแลระบบ', en: 'Administrator' },
             [ROLES.MANAGER]: { th: 'ผู้จัดการ', en: 'Manager' },
             [ROLES.VIEWER]: { th: 'ผู้ดู', en: 'Viewer' },
-            [ROLES.CUSTOMER]: { th: 'ลูกค้า', en: 'Customer' }
+            [ROLES.CUSTOMER]: { th: 'พนักงาน', en: 'Employee' }
         };
 
         return roleNames[this.userRole]?.[lang] || this.userRole;
