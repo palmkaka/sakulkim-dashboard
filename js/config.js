@@ -6,23 +6,23 @@
 // Firebase Configuration
 // TODO: Replace with your Firebase project config
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyC3YMUI75idr7Rtz1Oy-TUGDXoStblkigU",
+  authDomain: "sakulkim-dashboard.firebaseapp.com",
+  projectId: "sakulkim-dashboard",
+  storageBucket: "sakulkim-dashboard.firebasestorage.app",
+  messagingSenderId: "599960097010",
+  appId: "1:599960097010:web:b608ee93bff90c6130806b"
 };
 
 // Google Sheets Configuration
 const sheetsConfig = {
   // TODO: Replace with your Google Sheets API Key
   apiKey: "YOUR_GOOGLE_SHEETS_API_KEY",
-  
+
   // TODO: Replace with your Google Sheet ID (from the URL)
   // Example: https://docs.google.com/spreadsheets/d/1oR4Plu0lCJ8hMcC5qiRHNDk8JEyvKRGpBiupbRrofOw/edit
   spreadsheetId: "1oR4Plu0lCJ8hMcC5qiRHNDk8JEyvKRGpBiupbRrofOw",
-  
+
   // Sheet names
   sheets: {
     revenue2568: "รายได้2568",
