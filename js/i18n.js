@@ -174,9 +174,36 @@ class I18n {
 // Create global instance
 const i18n = new I18n();
 
+// Setup language toggle buttons
+function setupLanguageToggle() {
+    const langBtns = document.querySelectorAll('.lang-btn');
+    langBtns.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const lang = btn.dataset.lang;
+            if (lang) {
+                await i18n.setLanguage(lang);
+                // Update button active states
+                langBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        });
+    });
+
+    // Set initial active state based on current language
+    const currentLang = i18n.getCurrentLang();
+    langBtns.forEach(btn => {
+        if (btn.dataset.lang === currentLang) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
 // Auto-initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     i18n.init();
+    setupLanguageToggle();
 });
 
 // Export for module usage
