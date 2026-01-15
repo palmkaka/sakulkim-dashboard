@@ -213,9 +213,9 @@
                             <input type="email" class="form-input" id="newAdminEmail" placeholder="admin@example.com"
                                 style="flex: 1;">
                             <select class="form-select role-select" id="newAdminRole">
-                                <option value="admin">Admin</option>
-                                <option value="manager">Manager</option>
-                                <option value="viewer">Viewer</option>
+                                <option value="admin">ผู้ดูแลระบบ</option>
+                                <option value="manager">ผู้จัดการ</option>
+                                <option value="viewer">ผู้ดู</option>
                                 <option value="customer">พนักงาน</option>
                             </select>
                             <button class="btn btn-primary" id="addUserBtn">เพิ่ม</button>
@@ -304,9 +304,9 @@
             }
 
             const roleLabels = {
-                admin: { label: 'Admin', color: 'var(--primary-400)' },
-                manager: { label: 'Manager', color: 'var(--secondary-400)' },
-                viewer: { label: 'Viewer', color: 'var(--accent-400)' },
+                admin: { label: 'ผู้ดูแลระบบ', color: 'var(--primary-400)' },
+                manager: { label: 'ผู้จัดการ', color: 'var(--secondary-400)' },
+                viewer: { label: 'ผู้ดู', color: 'var(--accent-400)' },
                 customer: { label: 'พนักงาน', color: 'var(--text-muted)' }
             };
 
@@ -327,9 +327,9 @@
               </div>
             </div>
             <select class="form-select role-select" onchange="changeRole('${user.uid}', this.value)" ${isCurrentUser ? 'disabled' : ''}>
-              <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>👑 Admin</option>
-              <option value="manager" ${user.role === 'manager' ? 'selected' : ''}>📊 Manager</option>
-              <option value="viewer" ${user.role === 'viewer' ? 'selected' : ''}>👁️ Viewer</option>
+              <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>👑 ผู้ดูแลระบบ</option>
+              <option value="manager" ${user.role === 'manager' ? 'selected' : ''}>📊 ผู้จัดการ</option>
+              <option value="viewer" ${user.role === 'viewer' ? 'selected' : ''}>👁️ ผู้ดู</option>
               <option value="customer" ${user.role === 'customer' ? 'selected' : ''}>👤 พนักงาน</option>
             </select>
           </div>
