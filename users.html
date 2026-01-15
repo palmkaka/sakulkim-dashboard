@@ -241,6 +241,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script src="js/config.js"></script>
     <script src="js/i18n.js"></script>
@@ -248,6 +249,7 @@
 
     <script>
         firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
         let currentUser = null;
         let allUsers = [];
@@ -279,20 +281,29 @@
         }
 
         function loadAllUsers() {
-            // Load users from localStorage (all keys starting with 'user_')
-            allUsers = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('user_')) {
-                    try {
-                        const user = JSON.parse(localStorage.getItem(key));
-                        user.uid = key.replace('user_', '');
-                        allUsers.push(user);
-                    } catch (e) { }
+            // Load users from Firestore
+            db.collection('users').onSnapshot(snapshot => {
+                allUsers = [];
+                snapshot.forEach(doc => {
+                    allUsers.push({ uid: doc.id, ...doc.data() });
+                });
+                renderUsers();
+            }, error => {
+                console.error('Error loading users:', error);
+                // Fallback to localStorage
+                allUsers = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('user_')) {
+                        try {
+                            const user = JSON.parse(localStorage.getItem(key));
+                            user.uid = key.replace('user_', '');
+                            allUsers.push(user);
+                        } catch (e) { }
+                    }
                 }
-            }
-
-            renderUsers();
+                renderUsers();
+            });
         }
 
         function renderUsers() {
@@ -337,13 +348,21 @@
             }).join('');
         }
 
-        function changeRole(uid, newRole) {
-            const userKey = 'user_' + uid;
-            const user = JSON.parse(localStorage.getItem(userKey));
-            if (user) {
+        async function changeRole(uid, newRole) {
+            try {
+                // Update in Firestore
+                await db.collection('users').doc(uid).update({ role: newRole });
+
+                // Also update localStorage
+                const userKey = 'user_' + uid;
+                const user = JSON.parse(localStorage.getItem(userKey) || '{}');
                 user.role = newRole;
                 localStorage.setItem(userKey, JSON.stringify(user));
+
                 showToast(`เปลี่ยน Role เป็น ${newRole} เรียบร้อย`, 'success');
+            } catch (error) {
+                console.error('Error changing role:', error);
+                showToast('เกิดข้อผิดพลาดในการเปลี่ยน Role', 'error');
             }
         }
 

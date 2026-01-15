@@ -323,6 +323,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <!-- App Scripts -->
     <script src="js/config.js"></script>
@@ -331,6 +332,7 @@
 
     <script>
         firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
         let currentUser = null;
         let pendingEntries = [];
@@ -369,12 +371,20 @@
         }
 
         function loadPendingEntries() {
-            // Load from local storage
-            const allEntries = JSON.parse(localStorage.getItem('pendingEntries') || '[]');
-            pendingEntries = allEntries.filter(e => e.status === 'pending');
-
-            document.getElementById('pendingCount').textContent = pendingEntries.length;
-            renderPendingEntries();
+            // Load from Firestore
+            db.collection('entries')
+                .where('status', '==', 'pending')
+                .orderBy('submittedAt', 'desc')
+                .onSnapshot(snapshot => {
+                    pendingEntries = [];
+                    snapshot.forEach(doc => {
+                        pendingEntries.push({ id: doc.id, ...doc.data() });
+                    });
+                    document.getElementById('pendingCount').textContent = pendingEntries.length;
+                    renderPendingEntries();
+                }, error => {
+                    console.error('Error loading entries:', error);
+                });
         }
 
         function renderPendingEntries() {
@@ -471,17 +481,16 @@
             showToast('ปฏิเสธรายการเรียบร้อย', 'info');
         }
 
-        function updateEntryStatus(entryId, status, reason = '') {
-            const allEntries = JSON.parse(localStorage.getItem('pendingEntries') || '[]');
-            const index = allEntries.findIndex(e => e.id === entryId);
+        async function updateEntryStatus(entryId, status, reason = '') {
+            try {
+                const updateData = {
+                    status: status,
+                    reviewedBy: currentUser.email,
+                    reviewedAt: new Date().toISOString()
+                };
+                if (reason) updateData.rejectReason = reason;
 
-            if (index !== -1) {
-                allEntries[index].status = status;
-                allEntries[index].reviewedBy = currentUser.email;
-                allEntries[index].reviewedAt = new Date().toISOString();
-                if (reason) allEntries[index].rejectReason = reason;
-
-                localStorage.setItem('pendingEntries', JSON.stringify(allEntries));
+                await db.collection('entries').doc(entryId).update(updateData);
 
                 // Animate removal
                 const card = document.getElementById(`entry-${entryId}`);
@@ -489,10 +498,10 @@
                     card.style.transition = 'all 0.3s ease';
                     card.style.opacity = '0';
                     card.style.transform = 'translateX(100px)';
-                    setTimeout(() => {
-                        loadPendingEntries();
-                    }, 300);
                 }
+            } catch (error) {
+                console.error('Error updating entry:', error);
+                showToast('เกิดข้อผิดพลาด', 'error');
             }
         }
 

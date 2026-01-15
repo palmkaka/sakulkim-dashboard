@@ -471,6 +471,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
     <!-- App Scripts -->
@@ -481,6 +482,8 @@
     <script>
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
 
         let currentUser = null;
         let selectedType = 'revenue';
@@ -644,13 +647,22 @@
             submitSpinner.classList.remove('hidden');
 
             try {
+                // Upload file if exists
+                let fileUrl = null;
+                if (selectedFile) {
+                    const storageRef = storage.ref(`receipts/${Date.now()}_${selectedFile.name}`);
+                    const snapshot = await storageRef.put(selectedFile);
+                    fileUrl = await snapshot.ref.getDownloadURL();
+                }
+
                 const entryData = {
-                    id: Date.now().toString(),
                     type: selectedType,
                     submittedBy: currentUser.email,
                     submittedAt: new Date().toISOString(),
                     status: 'pending'
                 };
+
+                if (fileUrl) entryData.fileUrl = fileUrl;
 
                 if (selectedType === 'trip') {
                     entryData.date = document.getElementById('tripDate').value;
@@ -667,10 +679,8 @@
 
                 entryData.description = document.getElementById('description').value;
 
-                // Save to local storage for demo
-                const entries = JSON.parse(localStorage.getItem('pendingEntries') || '[]');
-                entries.unshift(entryData);
-                localStorage.setItem('pendingEntries', JSON.stringify(entries));
+                // Save to Firestore
+                await db.collection('entries').add(entryData);
 
                 // Show success
                 alert('บันทึกข้อมูลสำเร็จ! รอการอนุมัติ');
@@ -679,7 +689,7 @@
 
             } catch (error) {
                 console.error('Error submitting entry:', error);
-                alert('เกิดข้อผิดพลาด กรุณาลองใหม่');
+                alert('เกิดข้อผิดพลาด: ' + error.message);
             } finally {
                 submitBtn.disabled = false;
                 submitSpinner.classList.add('hidden');

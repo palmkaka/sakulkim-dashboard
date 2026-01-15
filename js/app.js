@@ -83,6 +83,17 @@ function setupNavigationByRole() {
     if (navDataEntry) {
         navDataEntry.style.display = auth.canAddData() ? 'flex' : 'none';
     }
+
+    // Hide dashboard for employees (customer role)
+    const navDashboard = document.getElementById('navDashboard');
+    if (role === 'customer') {
+        if (navDashboard) navDashboard.style.display = 'none';
+
+        // If on dashboard page, redirect to my-entries
+        if (window.location.pathname.endsWith('dashboard.html') || window.location.pathname === '/') {
+            window.location.href = 'my-entries.html';
+        }
+    }
 }
 
 // ===== INITIALIZE DASHBOARD =====

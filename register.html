@@ -167,6 +167,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <!-- App Scripts -->
     <script src="js/config.js"></script>
@@ -176,6 +177,7 @@
     <script>
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
@@ -252,7 +254,7 @@
                 // Update display name
                 await result.user.updateProfile({ displayName });
 
-                // Save user profile
+                // Save user profile to Firestore
                 const profile = {
                     uid: result.user.uid,
                     email: email,
@@ -260,6 +262,7 @@
                     role: 'customer', // Default role
                     createdAt: new Date().toISOString()
                 };
+                await db.collection('users').doc(result.user.uid).set(profile);
                 localStorage.setItem(`user_${result.user.uid}`, JSON.stringify(profile));
 
                 // Redirect to appropriate page
@@ -281,15 +284,20 @@
             try {
                 const result = await firebase.auth().signInWithPopup(provider);
 
-                // Save user profile
-                const profile = {
-                    uid: result.user.uid,
-                    email: result.user.email,
-                    displayName: result.user.displayName,
-                    role: 'customer',
-                    createdAt: new Date().toISOString()
-                };
-                localStorage.setItem(`user_${result.user.uid}`, JSON.stringify(profile));
+                // Save user profile to Firestore
+                const userRef = db.collection('users').doc(result.user.uid);
+                const doc = await userRef.get();
+                if (!doc.exists) {
+                    const profile = {
+                        uid: result.user.uid,
+                        email: result.user.email,
+                        displayName: result.user.displayName,
+                        role: 'customer',
+                        createdAt: new Date().toISOString()
+                    };
+                    await userRef.set(profile);
+                    localStorage.setItem(`user_${result.user.uid}`, JSON.stringify(profile));
+                }
 
                 window.location.href = 'my-entries.html';
             } catch (error) {
