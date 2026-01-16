@@ -185,60 +185,115 @@ function updateDashboardFromStatistics(year, dataType) {
         return;
     }
 
-    // Get revenue data
+    // Get all stats by type
     const revenueStats = yearStats.filter(s => s.type === 'revenue');
     const expenseStats = yearStats.filter(s => s.type === 'expense');
 
-    // Calculate totals based on selected data type
-    let displayData = {};
-
-    if (dataType === 'all' || dataType === 'revenue') {
-        const revenueStat = revenueStats.find(s => s.category.includes('รายได้จากการขายสินค้า'));
-        displayData.revenue = revenueStat ? revenueStat.total : 0;
-        displayData.revenueMonthly = revenueStat ? revenueStat.monthlyData : Array(12).fill(0);
-    }
-
-    if (dataType === 'all' || dataType === 'other_income') {
-        const otherIncomeStat = revenueStats.find(s => s.category.includes('รายได้เป้า'));
-        displayData.otherIncome = otherIncomeStat ? otherIncomeStat.total : 0;
-    }
-
-    if (dataType === 'all' || dataType === 'total_revenue') {
-        const totalRevenueStat = revenueStats.find(s => s.category.includes('รวม รายได้'));
-        displayData.totalRevenue = totalRevenueStat ? totalRevenueStat.total : 0;
-        displayData.totalRevenueMonthly = totalRevenueStat ? totalRevenueStat.monthlyData : Array(12).fill(0);
-    }
-
-    if (dataType === 'all' || dataType === 'cogs') {
-        const cogsStat = revenueStats.find(s => s.category.includes('ต้นทุนสินค้า'));
-        displayData.cogs = cogsStat ? cogsStat.total : 0;
-        displayData.cogsMonthly = cogsStat ? cogsStat.monthlyData : Array(12).fill(0);
-    }
-
-    if (dataType === 'all' || dataType === 'gross_profit') {
-        const profitStat = revenueStats.find(s => s.category.includes('กำไร'));
-        displayData.grossProfit = profitStat ? profitStat.total : 0;
-        displayData.grossProfitMonthly = profitStat ? profitStat.monthlyData : Array(12).fill(0);
-    }
+    // Find specific stats
+    const salesRevenue = revenueStats.find(s => s.category && s.category.includes('รายได้จากการขายสินค้า'));
+    const otherIncome = revenueStats.find(s => s.category && s.category.includes('รายได้เป้า'));
+    const totalRevenue = revenueStats.find(s => s.category && s.category.includes('รวม รายได้'));
+    const cogsStat = revenueStats.find(s => s.category && s.category.includes('ต้นทุนสินค้า'));
+    const profitStat = revenueStats.find(s => s.category && s.category.includes('กำไร'));
 
     // Calculate expenses total
     let expenseTotal = 0;
     expenseStats.forEach(stat => {
         expenseTotal += stat.total || 0;
     });
-    displayData.expenses = expenseTotal;
 
-    // Update stats cards
-    updateStatValue('totalRevenue', displayData.totalRevenue || displayData.revenue || 0);
-    updateStatValue('totalCOGS', displayData.cogs || 0);
-    updateStatValue('totalExpenses', displayData.expenses || 0);
-    updateStatValue('netProfit', displayData.grossProfit || 0);
+    // Get data based on selected type
+    let displayValue = 0;
+    let displayMonthly = Array(12).fill(0);
+    let displayLabel = '';
+
+    switch (dataType) {
+        case 'revenue':
+            displayValue = salesRevenue ? salesRevenue.total : 0;
+            displayMonthly = salesRevenue ? salesRevenue.monthlyData : Array(12).fill(0);
+            displayLabel = 'รายได้จากการขายสินค้า';
+            break;
+        case 'other_income':
+            displayValue = otherIncome ? otherIncome.total : 0;
+            displayMonthly = otherIncome ? otherIncome.monthlyData : Array(12).fill(0);
+            displayLabel = 'รายได้เป้า/ส่วนลด/อื่นๆ';
+            break;
+        case 'total_revenue':
+            displayValue = totalRevenue ? totalRevenue.total : 0;
+            displayMonthly = totalRevenue ? totalRevenue.monthlyData : Array(12).fill(0);
+            displayLabel = 'รวมรายได้ทั้งสิ้น';
+            break;
+        case 'cogs':
+            displayValue = cogsStat ? cogsStat.total : 0;
+            displayMonthly = cogsStat ? cogsStat.monthlyData : Array(12).fill(0);
+            displayLabel = 'ต้นทุนสินค้าเพื่อขาย';
+            break;
+        case 'gross_profit':
+            displayValue = profitStat ? profitStat.total : 0;
+            displayMonthly = profitStat ? profitStat.monthlyData : Array(12).fill(0);
+            displayLabel = 'กำไรขั้นต้น';
+            break;
+        default: // 'all'
+            displayValue = totalRevenue ? totalRevenue.total : (salesRevenue ? salesRevenue.total : 0);
+            displayMonthly = totalRevenue ? totalRevenue.monthlyData : (salesRevenue ? salesRevenue.monthlyData : Array(12).fill(0));
+            displayLabel = 'รวมรายได้ทั้งสิ้น';
+            break;
+    }
+
+    // Common values for all cases
+    const cogsValue = cogsStat ? cogsStat.total : 0;
+    const profitValue = profitStat ? profitStat.total : 0;
+    const totalRevenueVal = totalRevenue ? totalRevenue.total : (salesRevenue ? salesRevenue.total : 1);
+
+    // Update year comparison cards with selected data
+    const year2568El = document.getElementById('year2568Value');
+    const year2569El = document.getElementById('year2569Value');
+    if (year2569El) year2569El.textContent = formatCurrency(displayValue);
+
+    // Get previous year data
+    const prevYearStats = statisticsCache.filter(stat => stat.year === year - 1);
+    let prevYearValue = 0;
+    if (prevYearStats.length > 0) {
+        const prevRevenueStats = prevYearStats.filter(s => s.type === 'revenue');
+        switch (dataType) {
+            case 'revenue':
+                const prevSales = prevRevenueStats.find(s => s.category && s.category.includes('รายได้จากการขายสินค้า'));
+                prevYearValue = prevSales ? prevSales.total : 0;
+                break;
+            case 'cogs':
+                const prevCogs = prevRevenueStats.find(s => s.category && s.category.includes('ต้นทุนสินค้า'));
+                prevYearValue = prevCogs ? prevCogs.total : 0;
+                break;
+            case 'gross_profit':
+                const prevProfit = prevRevenueStats.find(s => s.category && s.category.includes('กำไร'));
+                prevYearValue = prevProfit ? prevProfit.total : 0;
+                break;
+            default:
+                const prevTotal = prevRevenueStats.find(s => s.category && s.category.includes('รวม รายได้'));
+                prevYearValue = prevTotal ? prevTotal.total : 0;
+        }
+    }
+    if (year2568El) year2568El.textContent = formatCurrency(prevYearValue);
+
+    // Update stats cards - show appropriate values
+    if (dataType === 'all') {
+        updateStatValue('totalRevenue', totalRevenueVal);
+        updateStatValue('totalCOGS', cogsValue);
+        updateStatValue('totalExpenses', expenseTotal);
+        updateStatValue('netProfit', profitValue - expenseTotal);
+    } else {
+        // When specific type selected, show that value prominently
+        updateStatValue('totalRevenue', displayValue);
+        updateStatValue('totalCOGS', cogsValue);
+        updateStatValue('totalExpenses', expenseTotal);
+        updateStatValue('netProfit', profitValue - expenseTotal);
+    }
 
     // Update percentages
-    const totalRev = displayData.totalRevenue || displayData.revenue || 1;
-    const cogsPercentage = ((displayData.cogs / totalRev) * 100).toFixed(1);
-    const expensesPercentage = ((displayData.expenses / totalRev) * 100).toFixed(1);
-    const profitMargin = ((displayData.grossProfit / totalRev) * 100).toFixed(1);
+    const cogsPercentage = totalRevenueVal > 0 ? ((cogsValue / totalRevenueVal) * 100).toFixed(1) : '0';
+    const expensesPercentage = totalRevenueVal > 0 ? ((expenseTotal / totalRevenueVal) * 100).toFixed(1) : '0';
+    const netProfit = profitValue - expenseTotal;
+    const profitMargin = totalRevenueVal > 0 ? ((netProfit / totalRevenueVal) * 100).toFixed(1) : '0';
 
     const cogsEl = document.getElementById('cogsPercentage');
     const expEl = document.getElementById('expensesPercentage');
@@ -248,15 +303,18 @@ function updateDashboardFromStatistics(year, dataType) {
     if (expEl) expEl.textContent = `${expensesPercentage}%`;
     if (profitEl) profitEl.textContent = `${profitMargin}%`;
 
-    // Create charts with imported data
+    // Create charts with selected data type
     const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+    const cogsMonthly = cogsStat ? cogsStat.monthlyData : Array(12).fill(0);
+    const profitMonthly = profitStat ? profitStat.monthlyData : Array(12).fill(0);
 
     if (typeof dashboardCharts !== 'undefined') {
+        // Use selected data for chart
         dashboardCharts.createTrendChart('trendChart', {
             labels: months,
-            revenue: displayData.totalRevenueMonthly || displayData.revenueMonthly || Array(12).fill(0),
-            cogs: displayData.cogsMonthly || Array(12).fill(0),
-            profit: displayData.grossProfitMonthly || Array(12).fill(0)
+            revenue: displayMonthly,
+            cogs: cogsMonthly,
+            profit: profitMonthly
         });
 
         // Expense chart by category
@@ -284,8 +342,8 @@ function updateDashboardFromStatistics(year, dataType) {
         }
     }
 
-    // Update data table
-    updateDataTableFromStatistics(revenueStats);
+    // Update data table with selected type or all
+    updateDataTableFromStatistics(revenueStats, dataType);
 }
 
 // ===== UPDATE DATA TABLE FROM STATISTICS =====
