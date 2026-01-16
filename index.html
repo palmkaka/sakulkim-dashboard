@@ -253,8 +253,8 @@
       try {
         const result = await firebase.auth().signInWithEmailAndPassword(email, password);
         await saveUserToFirestore(result.user);
-        // Redirect to dashboard
-        window.location.href = 'dashboard.html';
+        // Check if profile is complete
+        await redirectBasedOnProfile(result.user);
       } catch (error) {
         console.error('Login error:', error);
         loginError.classList.remove('hidden');
@@ -265,6 +265,7 @@
       }
     });
 
+
     // Google Sign In
     const googleSignIn = document.getElementById('googleSignIn');
     googleSignIn.addEventListener('click', async () => {
@@ -272,7 +273,7 @@
       try {
         const result = await firebase.auth().signInWithPopup(provider);
         await saveUserToFirestore(result.user);
-        window.location.href = 'dashboard.html';
+        await redirectBasedOnProfile(result.user);
       } catch (error) {
         console.error('Google sign in error:', error);
         loginError.classList.remove('hidden');
@@ -295,11 +296,33 @@
     }
 
     // Check if already logged in
-    firebase.auth().onAuthStateChanged((user) => {
+    firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
-        window.location.href = 'dashboard.html';
+        await redirectBasedOnProfile(user);
       }
     });
+
+    // Redirect based on profile completeness
+    async function redirectBasedOnProfile(user) {
+      try {
+        const profileDoc = await db.collection('users').doc(user.uid).get();
+        if (profileDoc.exists && profileDoc.data().displayName) {
+          // Profile complete - check role and redirect
+          const role = profileDoc.data().role;
+          if (role === 'admin') {
+            window.location.href = 'dashboard.html';
+          } else {
+            window.location.href = 'my-entries.html';
+          }
+        } else {
+          // First time user - go to profile setup
+          window.location.href = 'profile-setup.html';
+        }
+      } catch (error) {
+        console.error('Error checking profile:', error);
+        window.location.href = 'profile-setup.html';
+      }
+    }
 
     // Language Toggle
     const langBtns = document.querySelectorAll('.lang-btn');
