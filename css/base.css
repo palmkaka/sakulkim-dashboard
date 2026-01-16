@@ -24,8 +24,7 @@ body {
     font-weight: var(--font-normal);
     line-height: var(--leading-normal);
     color: var(--text-primary);
-    background: var(--gradient-mesh);
-    background-attachment: fixed;
+    background: var(--bg-primary);
     min-height: 100vh;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
