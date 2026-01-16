@@ -353,13 +353,47 @@
 
                             <!-- Revenue/Expense Fields -->
                             <div id="standardFields">
+                                <!-- Customer Group (for Revenue) -->
+                                <div class="form-group" id="customerGroupField">
+                                    <label class="form-label">กลุ่มลูกค้า *</label>
+                                    <select class="form-select" id="customerGroup" required>
+                                        <option value="">เลือกกลุ่มลูกค้า</option>
+                                        <option value="10">🏪 กลุ่มขายหน้าร้าน</option>
+                                        <option value="13">🏛️ กลุ่มโครงการหลวง</option>
+                                        <option value="20">🏗️ บริษัทรับสร้างบ้าน</option>
+                                        <option value="30">👷 ช่างผู้รับเหมาทั่วไป</option>
+                                        <option value="40">📋 งานราชการ</option>
+                                        <option value="50">🏭 ร้านค้าส่ง</option>
+                                        <option value="60">🏘️ บ้านจัดสรร</option>
+                                    </select>
+                                </div>
+
+                                <!-- Product Category (for Revenue) -->
+                                <div class="form-group" id="productCategoryField">
+                                    <label class="form-label">หมวดสินค้า *</label>
+                                    <select class="form-select" id="productCategory" required>
+                                        <option value="">เลือกหมวดสินค้า</option>
+                                        <option value="cement">🧱 ปูน ซีเมนต์ ยิปซั่ม</option>
+                                        <option value="steel_bar">🔩 เหล็กเส้น เหล็กแผ่น</option>
+                                        <option value="steel_shape">⚙️ เหล็กรูปพรรณ เหล็กดำ</option>
+                                        <option value="brick">🧱 อิฐ อิฐบล็อก อิฐมวลเบา</option>
+                                        <option value="paint">🎨 สี เคมีภัณฑ์</option>
+                                        <option value="roof">🏠 หลังคา กระเบื้อง</option>
+                                        <option value="pipe">🚿 ท่อ อุปกรณ์ประปา</option>
+                                        <option value="electrical">💡 อุปกรณ์ไฟฟ้า</option>
+                                        <option value="wood">🪵 ไม้ วัสดุไม้</option>
+                                        <option value="other">📦 อื่นๆ</option>
+                                    </select>
+                                </div>
+
                                 <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="form-label">หมวดหมู่ *</label>
+                                    <div class="form-group" id="categoryField">
+                                        <label class="form-label">ประเภทรายการ *</label>
                                         <select class="form-select" id="category" required>
-                                            <option value="">เลือกหมวดหมู่</option>
+                                            <option value="">เลือกประเภท</option>
                                             <option value="product_sales">ขายสินค้า</option>
                                             <option value="delivery_fee">ค่าจัดส่ง</option>
+                                            <option value="discount_rebate">รายได้เป้า/ส่วนลด</option>
                                             <option value="other_income">รายได้อื่น</option>
                                         </select>
                                     </div>
@@ -375,6 +409,7 @@
                                         min="0" required>
                                 </div>
                             </div>
+
 
                             <!-- Trip Fields -->
                             <div id="tripFields" class="hidden">
@@ -527,6 +562,10 @@
         function toggleFields() {
             const standardFields = document.getElementById('standardFields');
             const tripFields = document.getElementById('tripFields');
+            const customerGroupField = document.getElementById('customerGroupField');
+            const productCategoryField = document.getElementById('productCategoryField');
+            const customerGroup = document.getElementById('customerGroup');
+            const productCategory = document.getElementById('productCategory');
 
             if (selectedType === 'trip') {
                 standardFields.classList.add('hidden');
@@ -534,6 +573,19 @@
             } else {
                 standardFields.classList.remove('hidden');
                 tripFields.classList.add('hidden');
+            }
+
+            // Show customer group and product category only for revenue
+            if (selectedType === 'revenue') {
+                customerGroupField.classList.remove('hidden');
+                productCategoryField.classList.remove('hidden');
+                customerGroup.required = true;
+                productCategory.required = true;
+            } else {
+                customerGroupField.classList.add('hidden');
+                productCategoryField.classList.add('hidden');
+                customerGroup.required = false;
+                productCategory.required = false;
             }
         }
 
@@ -544,6 +596,7 @@
                 revenue: [
                     { value: 'product_sales', label: 'ขายสินค้า' },
                     { value: 'delivery_fee', label: 'ค่าจัดส่ง' },
+                    { value: 'discount_rebate', label: 'รายได้เป้า/ส่วนลด' },
                     { value: 'other_income', label: 'รายได้อื่น' }
                 ],
                 expense: [
@@ -552,6 +605,9 @@
                     { value: 'advertising', label: 'ค่าโฆษณาและส่งเสริม' },
                     { value: 'depreciation', label: 'ค่าเสื่อมราคา' },
                     { value: 'tax', label: 'ภาษีและอากร' },
+                    { value: 'utility', label: 'ค่าน้ำ ค่าไฟ' },
+                    { value: 'fuel', label: 'ค่าน้ำมัน' },
+                    { value: 'maintenance', label: 'ค่าซ่อมบำรุง' },
                     { value: 'general', label: 'บริการทั่วไป' },
                     { value: 'other_expense', label: 'ค่าใช้จ่ายอื่น' }
                 ]
@@ -560,9 +616,10 @@
             if (selectedType === 'trip') return;
 
             const options = categories[selectedType] || [];
-            categorySelect.innerHTML = '<option value="">เลือกหมวดหมู่</option>' +
+            categorySelect.innerHTML = '<option value="">เลือกประเภท</option>' +
                 options.map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('');
         }
+
 
         // File Upload
         const fileUpload = document.getElementById('fileUpload');
@@ -675,7 +732,14 @@
                     entryData.category = document.getElementById('category').value;
                     entryData.date = document.getElementById('entryDate').value;
                     entryData.amount = parseFloat(document.getElementById('amount').value);
+
+                    // Add customer group and product category for revenue entries
+                    if (selectedType === 'revenue') {
+                        entryData.customerGroup = document.getElementById('customerGroup').value;
+                        entryData.productCategory = document.getElementById('productCategory').value;
+                    }
                 }
+
 
                 entryData.description = document.getElementById('description').value;
 

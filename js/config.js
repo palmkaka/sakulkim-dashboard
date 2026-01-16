@@ -97,6 +97,7 @@ const CATEGORIES = {
   revenue: [
     { id: 'product_sales', name: { th: 'ขายสินค้า', en: 'Product Sales' } },
     { id: 'delivery_fee', name: { th: 'ค่าจัดส่ง', en: 'Delivery Fee' } },
+    { id: 'discount_rebate', name: { th: 'รายได้เป้า/ส่วนลด', en: 'Discount/Rebate' } },
     { id: 'other_income', name: { th: 'รายได้อื่น', en: 'Other Income' } }
   ],
   expense: [
@@ -105,6 +106,9 @@ const CATEGORIES = {
     { id: 'advertising', name: { th: 'ค่าโฆษณาและส่งเสริม', en: 'Advertising & Promotion' } },
     { id: 'depreciation', name: { th: 'ค่าเสื่อมราคา', en: 'Depreciation' } },
     { id: 'tax', name: { th: 'ภาษีและอากร', en: 'Tax & Duty' } },
+    { id: 'utility', name: { th: 'ค่าน้ำ ค่าไฟ', en: 'Utilities' } },
+    { id: 'fuel', name: { th: 'ค่าน้ำมัน', en: 'Fuel' } },
+    { id: 'maintenance', name: { th: 'ค่าซ่อมบำรุง', en: 'Maintenance' } },
     { id: 'general', name: { th: 'บริการทั่วไป', en: 'General Services' } },
     { id: 'other_expense', name: { th: 'ค่าใช้จ่ายอื่น', en: 'Other Expenses' } }
   ],
@@ -114,6 +118,32 @@ const CATEGORIES = {
     { id: 'other_trip', name: { th: 'อื่นๆ', en: 'Other' } }
   ]
 };
+
+// Customer Groups (กลุ่มลูกค้า)
+const CUSTOMER_GROUPS = [
+  { id: '10', name: { th: 'กลุ่มขายหน้าร้าน', en: 'Retail Sales' }, icon: '🏪' },
+  { id: '13', name: { th: 'กลุ่มโครงการหลวง', en: 'Government Projects' }, icon: '🏛️' },
+  { id: '20', name: { th: 'บริษัทรับสร้างบ้าน', en: 'Construction Companies' }, icon: '🏗️' },
+  { id: '30', name: { th: 'ช่างผู้รับเหมาทั่วไป', en: 'General Contractors' }, icon: '👷' },
+  { id: '40', name: { th: 'งานราชการ', en: 'Government Work' }, icon: '📋' },
+  { id: '50', name: { th: 'ร้านค้าส่ง', en: 'Wholesale' }, icon: '🏭' },
+  { id: '60', name: { th: 'บ้านจัดสรร', en: 'Housing Estate' }, icon: '🏘️' }
+];
+
+// Product Categories (หมวดสินค้า)
+const PRODUCT_CATEGORIES = [
+  { id: 'cement', name: { th: 'ปูน ซีเมนต์ ยิปซั่ม', en: 'Cement & Gypsum' }, icon: '🧱' },
+  { id: 'steel_bar', name: { th: 'เหล็กเส้น เหล็กแผ่น', en: 'Steel Bar & Sheet' }, icon: '🔩' },
+  { id: 'steel_shape', name: { th: 'เหล็กรูปพรรณ เหล็กดำ', en: 'Structural Steel' }, icon: '⚙️' },
+  { id: 'brick', name: { th: 'อิฐ อิฐบล็อก อิฐมวลเบา', en: 'Bricks & Blocks' }, icon: '🧱' },
+  { id: 'paint', name: { th: 'สี เคมีภัณฑ์', en: 'Paint & Chemicals' }, icon: '🎨' },
+  { id: 'roof', name: { th: 'หลังคา กระเบื้อง', en: 'Roofing & Tiles' }, icon: '🏠' },
+  { id: 'pipe', name: { th: 'ท่อ อุปกรณ์ประปา', en: 'Pipes & Plumbing' }, icon: '🚿' },
+  { id: 'electrical', name: { th: 'อุปกรณ์ไฟฟ้า', en: 'Electrical' }, icon: '💡' },
+  { id: 'wood', name: { th: 'ไม้ วัสดุไม้', en: 'Wood & Lumber' }, icon: '🪵' },
+  { id: 'other', name: { th: 'อื่นๆ', en: 'Others' }, icon: '📦' }
+];
+
 
 // Default Language
 const DEFAULT_LANG = 'th';
