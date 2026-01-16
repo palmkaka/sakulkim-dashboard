@@ -272,7 +272,7 @@
                             <line x1="3" y1="18" x2="21" y2="18"></line>
                         </svg>
                     </button>
-                    <h1 class="header-title">รายการของฉัน</h1>
+                    <h1 class="header-title" data-i18n="nav.my_entries">รายการของฉัน</h1>
                 </div>
                 <div class="header-right">
                     <div class="lang-toggle">
@@ -308,24 +308,25 @@
                 <div class="stats-row">
                     <div class="mini-stat">
                         <div class="mini-stat-value" id="totalEntries">0</div>
-                        <div class="mini-stat-label">รายการทั้งหมด</div>
+                        <div class="mini-stat-label" data-i18n="common.all">รายการทั้งหมด</div>
                     </div>
                     <div class="mini-stat">
                         <div class="mini-stat-value" id="pendingEntries" style="color: var(--warning);">0</div>
-                        <div class="mini-stat-label">รอตรวจสอบ</div>
+                        <div class="mini-stat-label" data-i18n="approvals.pending">รอตรวจสอบ</div>
                     </div>
                     <div class="mini-stat">
                         <div class="mini-stat-value" id="approvedEntries" style="color: var(--success);">0</div>
-                        <div class="mini-stat-label">อนุมัติแล้ว</div>
+                        <div class="mini-stat-label" data-i18n="approvals.approved">อนุมัติแล้ว</div>
                     </div>
                 </div>
 
                 <!-- Filter Tabs -->
                 <div class="filter-tabs">
-                    <button class="filter-tab active" data-filter="all">ทั้งหมด</button>
-                    <button class="filter-tab" data-filter="pending">รอตรวจสอบ</button>
-                    <button class="filter-tab" data-filter="approved">อนุมัติแล้ว</button>
-                    <button class="filter-tab" data-filter="rejected">ปฏิเสธ</button>
+                    <button class="filter-tab active" data-filter="all" data-i18n="common.all">ทั้งหมด</button>
+                    <button class="filter-tab" data-filter="pending" data-i18n="approvals.pending">รอตรวจสอบ</button>
+                    <button class="filter-tab" data-filter="approved"
+                        data-i18n="approvals.approved">อนุมัติแล้ว</button>
+                    <button class="filter-tab" data-filter="rejected" data-i18n="approvals.rejected">ปฏิเสธ</button>
                 </div>
 
                 <!-- Entries List -->
@@ -392,13 +393,27 @@
         }
 
         function loadEntries() {
-            // Load from local storage
-            const entries = JSON.parse(localStorage.getItem('pendingEntries') || '[]');
-            allEntries = entries.filter(e => e.submittedBy === currentUser?.email);
-
-            updateStats();
-            renderEntries();
+            // Load from Firestore with real-time updates
+            const db = firebase.firestore();
+            db.collection('entries')
+                .where('submittedBy', '==', currentUser?.email)
+                .orderBy('submittedAt', 'desc')
+                .onSnapshot(snapshot => {
+                    allEntries = [];
+                    snapshot.forEach(doc => {
+                        allEntries.push({ id: doc.id, ...doc.data() });
+                    });
+                    updateStats();
+                    renderEntries();
+                }, error => {
+                    console.error('Error loading entries:', error);
+                    // Fallback to empty array
+                    allEntries = [];
+                    updateStats();
+                    renderEntries();
+                });
         }
+
 
         function updateStats() {
             const total = allEntries.length;
