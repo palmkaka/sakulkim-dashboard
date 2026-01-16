@@ -126,6 +126,9 @@ async function initDashboard() {
         // Update data table
         updateDataTable(data);
 
+        // Load recent entries from Firestore
+        loadRecentEntries();
+
         // Hide loading state
         hideLoading();
 
@@ -135,6 +138,84 @@ async function initDashboard() {
         showError('เกิดข้อผิดพลาดในการโหลดข้อมูล');
     }
 }
+
+// ===== LOAD RECENT ENTRIES FROM FIRESTORE =====
+async function loadRecentEntries() {
+    const container = document.getElementById('recentEntriesContainer');
+    if (!container) return;
+
+    try {
+        const db = firebase.firestore();
+        const snapshot = await db.collection('entries')
+            .orderBy('submittedAt', 'desc')
+            .limit(10)
+            .get();
+
+        if (snapshot.empty) {
+            container.innerHTML = `
+                <div class="text-center text-muted p-4">
+                    <p>ยังไม่มีรายการจากพนักงาน</p>
+                </div>
+            `;
+            return;
+        }
+
+        const statusColors = {
+            pending: 'var(--warning)',
+            approved: 'var(--success)',
+            rejected: 'var(--error)'
+        };
+
+        const statusLabels = {
+            pending: 'รอตรวจสอบ',
+            approved: 'อนุมัติแล้ว',
+            rejected: 'ปฏิเสธ'
+        };
+
+        const typeIcons = {
+            revenue: '💰',
+            expense: '💸',
+            trip: '🚚'
+        };
+
+        let html = '<div class="recent-entries-list">';
+        snapshot.forEach(doc => {
+            const entry = doc.data();
+            const date = entry.date || entry.submittedAt?.split('T')[0] || '-';
+            const amount = entry.type === 'trip'
+                ? (entry.revenue || 0) - (entry.fuelCost || 0)
+                : entry.amount || 0;
+            const isPositive = entry.type === 'revenue' || (entry.type === 'trip' && amount > 0);
+
+            html += `
+                <div class="entry-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 20px;">${typeIcons[entry.type] || '📄'}</span>
+                        <div>
+                            <div style="font-weight: 500;">${entry.description || entry.category || entry.type}</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">${entry.submittedBy} • ${date}</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 600; color: ${isPositive ? 'var(--success)' : 'var(--error)'};">
+                            ${isPositive ? '+' : '-'}฿${Math.abs(amount).toLocaleString()}
+                        </div>
+                        <div style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${statusColors[entry.status]}20; color: ${statusColors[entry.status]};">
+                            ${statusLabels[entry.status] || entry.status}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+
+    } catch (error) {
+        console.error('Error loading recent entries:', error);
+        container.innerHTML = '<p class="text-center text-muted p-4">ไม่สามารถโหลดรายการได้</p>';
+    }
+}
+
 
 // ===== UPDATE STATS CARDS =====
 function updateStatsCards(data) {
