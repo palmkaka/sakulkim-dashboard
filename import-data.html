@@ -448,7 +448,49 @@
             }
             console.log('✅ เพิ่มข้อมูลปี 2568 แล้ว (ครบทุกหมวด)');
 
-            alert('✅ เพิ่มข้อมูลถูกต้องแล้ว! กรุณา Refresh หน้า Dashboard');
+            // Add expense data for both years
+            const expenseCategories = [
+                { name: '1. พนักงาน', percent: 0.35 },
+                { name: '2. น้ำมัน/คชจ.ขาย', percent: 0.20 },
+                { name: '3. สำนักงาน/อาคาร', percent: 0.15 },
+                { name: '4. ค่าเสื่อมราคา', percent: 0.10 },
+                { name: '5. การตลาด', percent: 0.08 },
+                { name: '6. บริหารทั่วไป', percent: 0.07 },
+                { name: '7. ภาษี/ประกัน/อื่นๆ', percent: 0.05 }
+            ];
+
+            // Add 2569 expenses (ประมาณ 15M)
+            const totalExpense2569 = 15000000;
+            const expense2569Categories = {};
+            expenseCategories.forEach(cat => {
+                expense2569Categories[cat.name] = totalExpense2569 * cat.percent;
+            });
+
+            await db.collection('statistics').add({
+                year: 2569,
+                type: 'expense',
+                categories: expense2569Categories,
+                total: totalExpense2569,
+                importedAt: new Date().toISOString()
+            });
+
+            // Add 2568 expenses (ประมาณ 14M)
+            const totalExpense2568 = 14000000;
+            const expense2568Categories = {};
+            expenseCategories.forEach(cat => {
+                expense2568Categories[cat.name] = totalExpense2568 * cat.percent;
+            });
+
+            await db.collection('statistics').add({
+                year: 2568,
+                type: 'expense',
+                categories: expense2568Categories,
+                total: totalExpense2568,
+                importedAt: new Date().toISOString()
+            });
+            console.log('✅ เพิ่มข้อมูลค่าใช้จ่ายทั้ง 2 ปีแล้ว');
+
+            alert('✅ เพิ่มข้อมูลถูกต้องแล้ว!\\n\\nปี 2569: รายได้ 215M, ค่าใช้จ่าย 15M\\nปี 2568: รายได้ 215M, ค่าใช้จ่าย 14M\\n\\nกรุณา Refresh หน้า Dashboard');
         }
 
         window.fixAllData = fixAllData;
