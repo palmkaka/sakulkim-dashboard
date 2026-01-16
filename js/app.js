@@ -478,20 +478,44 @@ function updateStatsCardsByYear(year) {
 
 // ===== UPDATE YEAR COMPARISON =====
 function updateYearComparison() {
+    const year2568El = document.getElementById('year2568Value');
+    const year2569El = document.getElementById('year2569Value');
+
+    // If we have statistics data, use it
+    if (statisticsCache && statisticsCache.length > 0) {
+        const stats2568 = statisticsCache.filter(s => s.year === 2568 && s.type === 'revenue');
+        const stats2569 = statisticsCache.filter(s => s.year === 2569 && s.type === 'revenue');
+
+        const total2568 = stats2568.find(s => s.category && s.category.includes('รวม รายได้'));
+        const total2569 = stats2569.find(s => s.category && s.category.includes('รวม รายได้'));
+
+        const value2568 = total2568 ? total2568.total : 0;
+        const value2569 = total2569 ? total2569.total : 0;
+
+        if (year2568El) year2568El.textContent = formatCurrency(value2568);
+        if (year2569El) year2569El.textContent = formatCurrency(value2569);
+
+        // Update change percentage
+        const changePercent = value2568 > 0
+            ? (((value2569 - value2568) / value2568) * 100).toFixed(1)
+            : '0';
+        const revenueChangeEl = document.getElementById('revenueChange');
+        if (revenueChangeEl) {
+            revenueChangeEl.textContent = changePercent >= 0 ? `+${changePercent}%` : `${changePercent}%`;
+        }
+        return;
+    }
+
+    // Fallback to entries data
     const currentYear = selectedYear;
     const previousYear = selectedYear - 1;
 
     const currentYearRevenue = calculateYearRevenue(currentYear);
     const previousYearRevenue = calculateYearRevenue(previousYear);
 
-    const year2568El = document.getElementById('year2568Value');
-    const year2569El = document.getElementById('year2569Value');
-
-    // Update labels dynamically (use the selected year and previous)
     if (year2568El) year2568El.textContent = formatCurrency(previousYearRevenue);
     if (year2569El) year2569El.textContent = formatCurrency(currentYearRevenue);
 
-    // Update change percentage
     const changePercent = previousYearRevenue > 0
         ? (((currentYearRevenue - previousYearRevenue) / previousYearRevenue) * 100).toFixed(1)
         : '0';
