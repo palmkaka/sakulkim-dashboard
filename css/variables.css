@@ -48,12 +48,13 @@
   --error: #ef4444;
   --info: #3b82f6;
 
-  /* Light Theme Colors (Default) */
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-card-hover: rgba(241, 245, 249, 0.95);
+  /* Light Theme Colors (Default) - Softer tones */
+  --bg-primary: #f1f5f9;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #e2e8f0;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card-hover: rgba(248, 250, 252, 0.95);
+
 
   /* Text Colors */
   --text-primary: #1e293b;
