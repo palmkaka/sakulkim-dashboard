@@ -202,28 +202,7 @@
                     </div>
                 </div>
 
-                <!-- Add Admin Form -->
-                <div class="chart-card mb-6">
-                    <div class="chart-header">
-                        <h3 class="chart-title">➕ เพิ่มผู้ใช้ใหม่เป็น Admin</h3>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Email ของผู้ใช้ที่ต้องการเพิ่ม</label>
-                        <div class="flex gap-3">
-                            <input type="email" class="form-input" id="newAdminEmail" placeholder="admin@example.com"
-                                style="flex: 1;">
-                            <select class="form-select role-select" id="newAdminRole">
-                                <option value="admin">ผู้ดูแลระบบ</option>
-                                <option value="manager">ผู้จัดการ</option>
-                                <option value="viewer">ผู้ดู</option>
-                                <option value="customer">พนักงาน</option>
-                            </select>
-                            <button class="btn btn-primary" id="addUserBtn">เพิ่ม</button>
-                        </div>
-                        <p class="text-sm text-muted mt-2">⚠️ ผู้ใช้ต้องสมัครสมาชิกก่อน แล้วจึงจะสามารถเพิ่ม Role ได้
-                        </p>
-                    </div>
-                </div>
+
 
                 <!-- Users List -->
                 <div class="chart-card">
@@ -366,24 +345,7 @@
             }
         }
 
-        // Add new user with role (pre-register)
-        document.getElementById('addUserBtn')?.addEventListener('click', () => {
-            const email = document.getElementById('newAdminEmail').value.trim();
-            const role = document.getElementById('newAdminRole').value;
 
-            if (!email) {
-                showToast('กรุณาใส่ Email', 'error');
-                return;
-            }
-
-            // Store pre-assigned role
-            const preAssignedRoles = JSON.parse(localStorage.getItem('preAssignedRoles') || '{}');
-            preAssignedRoles[email.toLowerCase()] = role;
-            localStorage.setItem('preAssignedRoles', JSON.stringify(preAssignedRoles));
-
-            showToast(`บันทึก Role ${role} สำหรับ ${email} เรียบร้อย`, 'success');
-            document.getElementById('newAdminEmail').value = '';
-        });
 
         function showToast(message, type = 'info') {
             const toast = document.createElement('div');
