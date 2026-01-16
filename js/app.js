@@ -245,35 +245,54 @@ function updateDashboardFromStatistics(year, dataType) {
     const profitValue = profitStat ? profitStat.total : 0;
     const totalRevenueVal = totalRevenue ? totalRevenue.total : (salesRevenue ? salesRevenue.total : 1);
 
-    // Update year comparison cards with selected data
+    // Update year comparison cards (always show 2568 vs 2569)
     const year2568El = document.getElementById('year2568Value');
     const year2569El = document.getElementById('year2569Value');
-    if (year2569El) year2569El.textContent = formatCurrency(displayValue);
 
-    // Get previous year data
-    const prevYearStats = statisticsCache.filter(stat => stat.year === year - 1);
-    let prevYearValue = 0;
-    if (prevYearStats.length > 0) {
-        const prevRevenueStats = prevYearStats.filter(s => s.type === 'revenue');
-        switch (dataType) {
-            case 'revenue':
-                const prevSales = prevRevenueStats.find(s => s.category && s.category.includes('รายได้จากการขายสินค้า'));
-                prevYearValue = prevSales ? prevSales.total : 0;
-                break;
-            case 'cogs':
-                const prevCogs = prevRevenueStats.find(s => s.category && s.category.includes('ต้นทุนสินค้า'));
-                prevYearValue = prevCogs ? prevCogs.total : 0;
-                break;
-            case 'gross_profit':
-                const prevProfit = prevRevenueStats.find(s => s.category && s.category.includes('กำไร'));
-                prevYearValue = prevProfit ? prevProfit.total : 0;
-                break;
-            default:
-                const prevTotal = prevRevenueStats.find(s => s.category && s.category.includes('รวม รายได้'));
-                prevYearValue = prevTotal ? prevTotal.total : 0;
-        }
+    // Get 2568 data
+    const stats2568 = statisticsCache.filter(stat => stat.year === 2568 && stat.type === 'revenue');
+    let value2568 = 0;
+    switch (dataType) {
+        case 'revenue':
+            const rev2568 = stats2568.find(s => s.category && s.category.includes('รายได้จากการขายสินค้า'));
+            value2568 = rev2568 ? rev2568.total : 0;
+            break;
+        case 'cogs':
+            const cogs2568 = stats2568.find(s => s.category && s.category.includes('ต้นทุนสินค้า'));
+            value2568 = cogs2568 ? cogs2568.total : 0;
+            break;
+        case 'gross_profit':
+            const profit2568 = stats2568.find(s => s.category && s.category.includes('กำไร'));
+            value2568 = profit2568 ? profit2568.total : 0;
+            break;
+        default:
+            const total2568 = stats2568.find(s => s.category && s.category.includes('รวม รายได้'));
+            value2568 = total2568 ? total2568.total : 0;
     }
-    if (year2568El) year2568El.textContent = formatCurrency(prevYearValue);
+
+    // Get 2569 data
+    const stats2569 = statisticsCache.filter(stat => stat.year === 2569 && stat.type === 'revenue');
+    let value2569 = 0;
+    switch (dataType) {
+        case 'revenue':
+            const rev2569 = stats2569.find(s => s.category && s.category.includes('รายได้จากการขายสินค้า'));
+            value2569 = rev2569 ? rev2569.total : 0;
+            break;
+        case 'cogs':
+            const cogs2569 = stats2569.find(s => s.category && s.category.includes('ต้นทุนสินค้า'));
+            value2569 = cogs2569 ? cogs2569.total : 0;
+            break;
+        case 'gross_profit':
+            const profit2569 = stats2569.find(s => s.category && s.category.includes('กำไร'));
+            value2569 = profit2569 ? profit2569.total : 0;
+            break;
+        default:
+            const total2569 = stats2569.find(s => s.category && s.category.includes('รวม รายได้'));
+            value2569 = total2569 ? total2569.total : 0;
+    }
+
+    if (year2568El) year2568El.textContent = formatCurrency(value2568);
+    if (year2569El) year2569El.textContent = formatCurrency(value2569);
 
     // Update stats cards - show appropriate values
     if (dataType === 'all') {
