@@ -193,10 +193,12 @@
 }
 
 .stat-value {
-    font-size: var(--text-3xl);
+    font-size: clamp(1.25rem, 2.5vw, 1.875rem);
     font-weight: var(--font-bold);
     color: var(--text-primary);
     font-feature-settings: 'tnum';
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .stat-change {

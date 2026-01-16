@@ -96,38 +96,49 @@ function setupNavigationByRole() {
     }
 }
 
+// ===== GLOBAL VARIABLES =====
+let selectedYear = new Date().getFullYear() + 543; // Default: current Buddhist year
+let allEntriesCache = []; // Cache for all entries
+
 // ===== INITIALIZE DASHBOARD =====
 async function initDashboard() {
     try {
         // Show loading state
         showLoading();
 
-        // Get data (use sample data if API is not configured)
-        let data;
-        if (isAPIConfigured()) {
-            // Fetch from Google Sheets API
-            const [revenue2568, revenue2569, expenses] = await Promise.all([
-                sheetsAPI.getRevenueData(2568),
-                sheetsAPI.getRevenueData(2569),
-                sheetsAPI.getExpenseData()
-            ]);
-            data = { revenue2568, revenue2569, expenses };
-        } else {
-            // Use sample data
-            data = getSampleData();
+        // Get selected year from dropdown
+        const yearSelect = document.getElementById('yearSelect');
+        if (yearSelect) {
+            selectedYear = parseInt(yearSelect.value);
         }
 
-        // Update stats cards
-        updateStatsCards(data);
+        // Fetch data from Firestore
+        const db = firebase.firestore();
+        const snapshot = await db.collection('entries')
+            .where('status', '==', 'approved')
+            .orderBy('date', 'desc')
+            .get();
 
-        // Create charts
-        createCharts(data);
+        // Convert to array and cache
+        allEntriesCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // Update data table
-        updateDataTable(data);
+        // Update stats cards with year filter
+        updateStatsCardsByYear(selectedYear);
 
-        // Load recent entries from Firestore
+        // Create charts with year filter
+        createChartsByYear(selectedYear);
+
+        // Update data table with year filter
+        updateDataTableByYear(selectedYear);
+
+        // Update year comparison cards
+        updateYearComparison();
+
+        // Load recent entries
         loadRecentEntries();
+
+        // Populate year dropdown with available years
+        populateYearDropdown();
 
         // Hide loading state
         hideLoading();
@@ -135,8 +146,222 @@ async function initDashboard() {
     } catch (error) {
         console.error('Error initializing dashboard:', error);
         hideLoading();
-        showError('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+        // Fallback to sample data
+        const data = getSampleData();
+        updateStatsCards(data);
+        createCharts(data);
+        updateDataTable(data);
     }
+}
+
+// ===== POPULATE YEAR DROPDOWN =====
+function populateYearDropdown() {
+    const yearSelect = document.getElementById('yearSelect');
+    if (!yearSelect || allEntriesCache.length === 0) return;
+
+    // Get unique years from entries
+    const years = [...new Set(allEntriesCache.map(entry => {
+        const date = entry.date || '';
+        const year = parseInt(date.substring(0, 4));
+        return year > 2500 ? year : year + 543; // Convert to Buddhist year if needed
+    }))].filter(y => y > 2500).sort((a, b) => b - a);
+
+    // Add current year if not in list
+    const currentBuddhistYear = new Date().getFullYear() + 543;
+    if (!years.includes(currentBuddhistYear)) {
+        years.unshift(currentBuddhistYear);
+    }
+
+    // Rebuild options
+    yearSelect.innerHTML = years.map(year =>
+        `<option value="${year}" ${year === selectedYear ? 'selected' : ''}>ปี ${year}</option>`
+    ).join('');
+}
+
+// ===== UPDATE STATS CARDS BY YEAR =====
+function updateStatsCardsByYear(year) {
+    // Filter entries by year
+    const yearEntries = allEntriesCache.filter(entry => {
+        const entryDate = entry.date || '';
+        const entryYear = parseInt(entryDate.substring(0, 4));
+        const buddhistYear = entryYear > 2500 ? entryYear : entryYear + 543;
+        return buddhistYear === year;
+    });
+
+    // Calculate totals
+    const revenueEntries = yearEntries.filter(e => e.type === 'revenue');
+    const expenseEntries = yearEntries.filter(e => e.type === 'expense');
+    const tripEntries = yearEntries.filter(e => e.type === 'trip');
+
+    const totalRevenue = revenueEntries.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+    const totalExpenses = expenseEntries.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+    const tripRevenue = tripEntries.reduce((sum, e) => sum + (parseFloat(e.revenue) || 0), 0);
+    const tripFuel = tripEntries.reduce((sum, e) => sum + (parseFloat(e.fuelCost) || 0), 0);
+
+    const totalAllRevenue = totalRevenue + tripRevenue;
+    const totalAllExpenses = totalExpenses + tripFuel;
+    const netProfit = totalAllRevenue - totalAllExpenses;
+
+    // Estimate COGS (85% of revenue as placeholder)
+    const totalCOGS = totalAllRevenue * 0.85;
+
+    // Update stats
+    updateStatValue('totalRevenue', totalAllRevenue);
+    updateStatValue('totalCOGS', totalCOGS);
+    updateStatValue('totalExpenses', totalAllExpenses);
+    updateStatValue('netProfit', netProfit);
+
+    // Update percentages
+    const cogsPercentage = totalAllRevenue > 0 ? ((totalCOGS / totalAllRevenue) * 100).toFixed(1) : '0';
+    const expensesPercentage = totalAllRevenue > 0 ? ((totalAllExpenses / totalAllRevenue) * 100).toFixed(1) : '0';
+    const profitMargin = totalAllRevenue > 0 ? ((netProfit / totalAllRevenue) * 100).toFixed(1) : '0';
+
+    const cogsEl = document.getElementById('cogsPercentage');
+    const expEl = document.getElementById('expensesPercentage');
+    const profitEl = document.getElementById('profitMargin');
+
+    if (cogsEl) cogsEl.textContent = `${cogsPercentage}%`;
+    if (expEl) expEl.textContent = `${expensesPercentage}%`;
+    if (profitEl) profitEl.textContent = `${profitMargin}%`;
+}
+
+// ===== UPDATE YEAR COMPARISON =====
+function updateYearComparison() {
+    const currentYear = selectedYear;
+    const previousYear = selectedYear - 1;
+
+    const currentYearRevenue = calculateYearRevenue(currentYear);
+    const previousYearRevenue = calculateYearRevenue(previousYear);
+
+    const year2568El = document.getElementById('year2568Value');
+    const year2569El = document.getElementById('year2569Value');
+
+    // Update labels dynamically (use the selected year and previous)
+    if (year2568El) year2568El.textContent = formatCurrency(previousYearRevenue);
+    if (year2569El) year2569El.textContent = formatCurrency(currentYearRevenue);
+
+    // Update change percentage
+    const changePercent = previousYearRevenue > 0
+        ? (((currentYearRevenue - previousYearRevenue) / previousYearRevenue) * 100).toFixed(1)
+        : '0';
+    const revenueChangeEl = document.getElementById('revenueChange');
+    if (revenueChangeEl) {
+        revenueChangeEl.textContent = changePercent >= 0 ? `+${changePercent}%` : `${changePercent}%`;
+    }
+}
+
+function calculateYearRevenue(year) {
+    const yearEntries = allEntriesCache.filter(entry => {
+        const entryDate = entry.date || '';
+        const entryYear = parseInt(entryDate.substring(0, 4));
+        const buddhistYear = entryYear > 2500 ? entryYear : entryYear + 543;
+        return buddhistYear === year;
+    });
+
+    const revenue = yearEntries.filter(e => e.type === 'revenue').reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+    const tripRevenue = yearEntries.filter(e => e.type === 'trip').reduce((sum, e) => sum + (parseFloat(e.revenue) || 0), 0);
+    return revenue + tripRevenue;
+}
+
+// ===== CREATE CHARTS BY YEAR =====
+function createChartsByYear(year) {
+    // Get monthly data for selected year
+    const monthlyData = getMonthlyData(year);
+
+    // Trend Chart
+    if (typeof dashboardCharts !== 'undefined') {
+        dashboardCharts.createTrendChart('trendChart', {
+            labels: monthlyData.labels,
+            revenue: monthlyData.revenue,
+            cogs: monthlyData.cogs,
+            profit: monthlyData.profit
+        });
+
+        // Expense Chart by category
+        const expensesByCategory = getExpensesByCategory(year);
+        dashboardCharts.createExpenseChart('expenseChart', {
+            labels: expensesByCategory.labels,
+            values: expensesByCategory.values
+        });
+    }
+}
+
+function getMonthlyData(year) {
+    const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+    const revenue = Array(12).fill(0);
+    const expenses = Array(12).fill(0);
+
+    allEntriesCache.forEach(entry => {
+        const entryDate = entry.date || '';
+        const entryYear = parseInt(entryDate.substring(0, 4));
+        const buddhistYear = entryYear > 2500 ? entryYear : entryYear + 543;
+
+        if (buddhistYear !== year) return;
+
+        const month = parseInt(entryDate.substring(5, 7)) - 1; // 0-indexed
+        if (month < 0 || month > 11) return;
+
+        if (entry.type === 'revenue') {
+            revenue[month] += parseFloat(entry.amount) || 0;
+        } else if (entry.type === 'trip') {
+            revenue[month] += parseFloat(entry.revenue) || 0;
+            expenses[month] += parseFloat(entry.fuelCost) || 0;
+        } else if (entry.type === 'expense') {
+            expenses[month] += parseFloat(entry.amount) || 0;
+        }
+    });
+
+    const cogs = revenue.map(r => r * 0.85); // Estimate COGS
+    const profit = revenue.map((r, i) => r - cogs[i] - expenses[i]);
+
+    return { labels: months, revenue, cogs, profit };
+}
+
+function getExpensesByCategory(year) {
+    const categoryTotals = {};
+
+    allEntriesCache.forEach(entry => {
+        const entryDate = entry.date || '';
+        const entryYear = parseInt(entryDate.substring(0, 4));
+        const buddhistYear = entryYear > 2500 ? entryYear : entryYear + 543;
+
+        if (buddhistYear !== year) return;
+        if (entry.type !== 'expense') return;
+
+        const category = entry.category || 'อื่นๆ';
+        categoryTotals[category] = (categoryTotals[category] || 0) + (parseFloat(entry.amount) || 0);
+    });
+
+    return {
+        labels: Object.keys(categoryTotals),
+        values: Object.values(categoryTotals)
+    };
+}
+
+// ===== UPDATE DATA TABLE BY YEAR =====
+function updateDataTableByYear(year) {
+    const tbody = document.getElementById('revenueTableBody');
+    if (!tbody) return;
+
+    const monthlyData = getMonthlyData(year);
+
+    const rows = [
+        { label: 'รายได้รวม', data: monthlyData.revenue, class: '' },
+        { label: 'ต้นทุนสินค้า (COGS)', data: monthlyData.cogs, class: '' },
+        { label: 'กำไรขั้นต้น', data: monthlyData.profit, class: 'font-semibold text-success' }
+    ];
+
+    tbody.innerHTML = rows.map(row => {
+        const total = row.data.reduce((a, b) => a + b, 0);
+        return `
+      <tr class="${row.class}">
+        <td>${row.label}</td>
+        ${row.data.slice(0, 6).map(val => `<td class="text-right">${formatNumber(val)}</td>`).join('')}
+        ${row.data.slice(6).map(val => `<td class="text-right hide-mobile">${formatNumber(val)}</td>`).join('')}
+        <td class="text-right font-semibold">${formatNumber(total)}</td>
+      </tr>
+    `;
+    }).join('');
 }
 
 // ===== LOAD RECENT ENTRIES FROM FIRESTORE =====
