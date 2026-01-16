@@ -463,6 +463,11 @@
                     rejected: '<span class="badge badge-danger">❌ ปฏิเสธ</span>'
                 }[entry.status] || '';
 
+                // Show delete button only for pending entries
+                const deleteBtn = entry.status === 'pending'
+                    ? `<button class="btn btn-sm btn-danger" onclick="deleteEntry('${entry.id}')" style="margin-left: 8px;">🗑️</button>`
+                    : '';
+
                 return `
           <div class="entry-card">
             <div class="entry-card-header">
@@ -470,9 +475,12 @@
                 <span class="entry-type-badge ${typeClass}">${typeLabel}</span>
                 <p class="text-sm text-muted mt-2">${entry.description || 'ไม่มีคำอธิบาย'}</p>
               </div>
-              <div class="text-right">
-                <div class="entry-amount ${amountClass}">${amountPrefix}฿${amount.toLocaleString()}</div>
-                ${statusBadge}
+              <div class="text-right" style="display: flex; align-items: center; gap: 8px;">
+                <div>
+                  <div class="entry-amount ${amountClass}">${amountPrefix}฿${amount.toLocaleString()}</div>
+                  ${statusBadge}
+                </div>
+                ${deleteBtn}
               </div>
             </div>
             <div class="entry-meta">
@@ -484,6 +492,22 @@
         `;
             }).join('');
         }
+
+        async function deleteEntry(entryId) {
+            if (!confirm('คุณแน่ใจหรือไม่ที่จะลบรายการนี้?')) {
+                return;
+            }
+
+            try {
+                const db = firebase.firestore();
+                await db.collection('entries').doc(entryId).delete();
+                // Real-time listener will update automatically
+            } catch (error) {
+                console.error('Error deleting entry:', error);
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            }
+        }
+
 
         function formatDate(dateStr) {
             if (!dateStr) return '-';

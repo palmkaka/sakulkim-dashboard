@@ -301,6 +301,32 @@
                         <h2 class="page-title">รายการรอตรวจสอบ</h2>
                         <p class="page-subtitle">ตรวจสอบและอนุมัติข้อมูลที่พนักงานส่งเข้ามา</p>
                     </div>
+                    <button class="btn btn-danger" id="clearAllBtn" onclick="clearAllEntries()">
+                        🗑️ ล้างข้อมูลทั้งหมด
+                    </button>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="stats-row"
+                    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-bottom: var(--space-6);">
+                    <div class="mini-stat"
+                        style="background: var(--bg-secondary); padding: var(--space-4); border-radius: var(--radius-lg); text-align: center;">
+                        <div class="mini-stat-value" id="pendingCount"
+                            style="font-size: 2rem; font-weight: 700; color: var(--warning);">0</div>
+                        <div class="mini-stat-label" style="color: var(--text-muted);">⏳ รอตรวจสอบ</div>
+                    </div>
+                    <div class="mini-stat"
+                        style="background: var(--bg-secondary); padding: var(--space-4); border-radius: var(--radius-lg); text-align: center;">
+                        <div class="mini-stat-value" id="approvedCount"
+                            style="font-size: 2rem; font-weight: 700; color: var(--success);">0</div>
+                        <div class="mini-stat-label" style="color: var(--text-muted);">✅ อนุมัติแล้ว</div>
+                    </div>
+                    <div class="mini-stat"
+                        style="background: var(--bg-secondary); padding: var(--space-4); border-radius: var(--radius-lg); text-align: center;">
+                        <div class="mini-stat-value" id="rejectedCount"
+                            style="font-size: 2rem; font-weight: 700; color: var(--error);">0</div>
+                        <div class="mini-stat-label" style="color: var(--text-muted);">❌ ปฏิเสธ</div>
+                    </div>
                 </div>
 
                 <!-- Pending Entries List -->
@@ -312,11 +338,12 @@
                             <polyline points="9 11 12 14 22 4"></polyline>
                             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
                         </svg>
-                        <h3 class="text-xl font-semibold mb-2">ไม่มีรายการรออนุมัติ</h3>
-                        <p class="text-muted">รายการทั้งหมดได้รับการตรวจสอบแล้ว</p>
+                        <h3 class="text-xl font-semibold mb-2">ยอดเยี่ยม!</h3>
+                        <p class="text-muted">ไม่มีรายการรออนุมัติ ทุกอย่างได้รับการตรวจสอบแล้ว</p>
                     </div>
                 </div>
             </div>
+
         </main>
     </div>
 
@@ -371,6 +398,9 @@
         }
 
         function loadPendingEntries() {
+            // Load stats for all statuses
+            loadEntriesStats();
+
             // Load from Firestore
             db.collection('entries')
                 .where('status', '==', 'pending')
@@ -386,6 +416,45 @@
                     console.error('Error loading entries:', error);
                 });
         }
+
+        async function loadEntriesStats() {
+            try {
+                // Load approved count
+                const approvedSnapshot = await db.collection('entries')
+                    .where('status', '==', 'approved')
+                    .get();
+                document.getElementById('approvedCount').textContent = approvedSnapshot.size;
+
+                // Load rejected count
+                const rejectedSnapshot = await db.collection('entries')
+                    .where('status', '==', 'rejected')
+                    .get();
+                document.getElementById('rejectedCount').textContent = rejectedSnapshot.size;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function clearAllEntries() {
+            if (!confirm('⚠️ คุณแน่ใจหรือไม่ที่จะลบข้อมูลทั้งหมด?\n\nการดำเนินการนี้ไม่สามารถยกเลิกได้')) {
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('entries').get();
+                const batch = db.batch();
+                snapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+                alert('✅ ลบข้อมูลทั้งหมดเรียบร้อยแล้ว');
+                loadEntriesStats();
+            } catch (error) {
+                console.error('Error clearing entries:', error);
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            }
+        }
+
 
         function renderPendingEntries() {
             const container = document.getElementById('pendingList');
