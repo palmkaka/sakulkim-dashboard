@@ -98,7 +98,9 @@ function setupNavigationByRole() {
 
 // ===== GLOBAL VARIABLES =====
 let selectedYear = new Date().getFullYear() + 543; // Default: current Buddhist year
+let selectedDataType = 'all'; // Default: show all data types
 let allEntriesCache = []; // Cache for all entries
+let statisticsCache = []; // Cache for statistics data
 
 // ===== INITIALIZE DASHBOARD =====
 async function initDashboard() {
@@ -112,24 +114,40 @@ async function initDashboard() {
             selectedYear = parseInt(yearSelect.value);
         }
 
+        // Get selected data type from dropdown
+        const dataTypeSelect = document.getElementById('dataTypeSelect');
+        if (dataTypeSelect) {
+            selectedDataType = dataTypeSelect.value;
+        }
+
         // Fetch data from Firestore
         const db = firebase.firestore();
-        const snapshot = await db.collection('entries')
+
+        // Fetch entries (from data-entry submissions)
+        const entriesSnapshot = await db.collection('entries')
             .where('status', '==', 'approved')
             .orderBy('date', 'desc')
             .get();
 
+        // Fetch statistics (from CSV import)
+        const statsSnapshot = await db.collection('statistics')
+            .orderBy('importedAt', 'desc')
+            .get();
+
         // Convert to array and cache
-        allEntriesCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        allEntriesCache = entriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        statisticsCache = statsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // Update stats cards with year filter
-        updateStatsCardsByYear(selectedYear);
-
-        // Create charts with year filter
-        createChartsByYear(selectedYear);
-
-        // Update data table with year filter
-        updateDataTableByYear(selectedYear);
+        // Update dashboard based on data source
+        if (statisticsCache.length > 0) {
+            // Use imported statistics data
+            updateDashboardFromStatistics(selectedYear, selectedDataType);
+        } else {
+            // Fallback to entries data
+            updateStatsCardsByYear(selectedYear);
+            createChartsByYear(selectedYear);
+            updateDataTableByYear(selectedYear);
+        }
 
         // Update year comparison cards
         updateYearComparison();
@@ -152,6 +170,162 @@ async function initDashboard() {
         createCharts(data);
         updateDataTable(data);
     }
+}
+
+// ===== UPDATE DASHBOARD FROM STATISTICS =====
+function updateDashboardFromStatistics(year, dataType) {
+    // Filter statistics by year
+    const yearStats = statisticsCache.filter(stat => stat.year === year);
+
+    if (yearStats.length === 0) {
+        // No imported data, fallback to entries
+        updateStatsCardsByYear(year);
+        createChartsByYear(year);
+        updateDataTableByYear(year);
+        return;
+    }
+
+    // Get revenue data
+    const revenueStats = yearStats.filter(s => s.type === 'revenue');
+    const expenseStats = yearStats.filter(s => s.type === 'expense');
+
+    // Calculate totals based on selected data type
+    let displayData = {};
+
+    if (dataType === 'all' || dataType === 'revenue') {
+        const revenueStat = revenueStats.find(s => s.category.includes('รายได้จากการขายสินค้า'));
+        displayData.revenue = revenueStat ? revenueStat.total : 0;
+        displayData.revenueMonthly = revenueStat ? revenueStat.monthlyData : Array(12).fill(0);
+    }
+
+    if (dataType === 'all' || dataType === 'other_income') {
+        const otherIncomeStat = revenueStats.find(s => s.category.includes('รายได้เป้า'));
+        displayData.otherIncome = otherIncomeStat ? otherIncomeStat.total : 0;
+    }
+
+    if (dataType === 'all' || dataType === 'total_revenue') {
+        const totalRevenueStat = revenueStats.find(s => s.category.includes('รวม รายได้'));
+        displayData.totalRevenue = totalRevenueStat ? totalRevenueStat.total : 0;
+        displayData.totalRevenueMonthly = totalRevenueStat ? totalRevenueStat.monthlyData : Array(12).fill(0);
+    }
+
+    if (dataType === 'all' || dataType === 'cogs') {
+        const cogsStat = revenueStats.find(s => s.category.includes('ต้นทุนสินค้า'));
+        displayData.cogs = cogsStat ? cogsStat.total : 0;
+        displayData.cogsMonthly = cogsStat ? cogsStat.monthlyData : Array(12).fill(0);
+    }
+
+    if (dataType === 'all' || dataType === 'gross_profit') {
+        const profitStat = revenueStats.find(s => s.category.includes('กำไร'));
+        displayData.grossProfit = profitStat ? profitStat.total : 0;
+        displayData.grossProfitMonthly = profitStat ? profitStat.monthlyData : Array(12).fill(0);
+    }
+
+    // Calculate expenses total
+    let expenseTotal = 0;
+    expenseStats.forEach(stat => {
+        expenseTotal += stat.total || 0;
+    });
+    displayData.expenses = expenseTotal;
+
+    // Update stats cards
+    updateStatValue('totalRevenue', displayData.totalRevenue || displayData.revenue || 0);
+    updateStatValue('totalCOGS', displayData.cogs || 0);
+    updateStatValue('totalExpenses', displayData.expenses || 0);
+    updateStatValue('netProfit', displayData.grossProfit || 0);
+
+    // Update percentages
+    const totalRev = displayData.totalRevenue || displayData.revenue || 1;
+    const cogsPercentage = ((displayData.cogs / totalRev) * 100).toFixed(1);
+    const expensesPercentage = ((displayData.expenses / totalRev) * 100).toFixed(1);
+    const profitMargin = ((displayData.grossProfit / totalRev) * 100).toFixed(1);
+
+    const cogsEl = document.getElementById('cogsPercentage');
+    const expEl = document.getElementById('expensesPercentage');
+    const profitEl = document.getElementById('profitMargin');
+
+    if (cogsEl) cogsEl.textContent = `${cogsPercentage}%`;
+    if (expEl) expEl.textContent = `${expensesPercentage}%`;
+    if (profitEl) profitEl.textContent = `${profitMargin}%`;
+
+    // Create charts with imported data
+    const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
+    if (typeof dashboardCharts !== 'undefined') {
+        dashboardCharts.createTrendChart('trendChart', {
+            labels: months,
+            revenue: displayData.totalRevenueMonthly || displayData.revenueMonthly || Array(12).fill(0),
+            cogs: displayData.cogsMonthly || Array(12).fill(0),
+            profit: displayData.grossProfitMonthly || Array(12).fill(0)
+        });
+
+        // Expense chart by category
+        const expenseLabels = [];
+        const expenseValues = [];
+        expenseStats.forEach(stat => {
+            if (stat.categories) {
+                Object.entries(stat.categories).forEach(([key, value]) => {
+                    const existingIndex = expenseLabels.indexOf(key);
+                    if (existingIndex >= 0) {
+                        expenseValues[existingIndex] += value;
+                    } else {
+                        expenseLabels.push(key);
+                        expenseValues.push(value);
+                    }
+                });
+            }
+        });
+
+        if (expenseLabels.length > 0) {
+            dashboardCharts.createExpenseChart('expenseChart', {
+                labels: expenseLabels,
+                values: expenseValues
+            });
+        }
+    }
+
+    // Update data table
+    updateDataTableFromStatistics(revenueStats);
+}
+
+// ===== UPDATE DATA TABLE FROM STATISTICS =====
+function updateDataTableFromStatistics(revenueStats) {
+    const tbody = document.getElementById('revenueTableBody');
+    if (!tbody) return;
+
+    const rows = [];
+    const categories = [
+        { key: 'รายได้จากการขายสินค้า', class: '' },
+        { key: 'รายได้เป้า', class: '' },
+        { key: 'รวม รายได้', class: 'font-semibold' },
+        { key: 'ต้นทุนสินค้า', class: '' },
+        { key: 'กำไร', class: 'font-semibold text-success' }
+    ];
+
+    categories.forEach(cat => {
+        const stat = revenueStats.find(s => s.category.includes(cat.key));
+        if (stat) {
+            rows.push({
+                label: stat.category,
+                data: stat.monthlyData || Array(12).fill(0),
+                class: cat.class
+            });
+        }
+    });
+
+    if (rows.length === 0) return;
+
+    tbody.innerHTML = rows.map(row => {
+        const total = row.data.reduce((a, b) => a + b, 0);
+        return `
+      <tr class="${row.class}">
+        <td>${row.label}</td>
+        ${row.data.slice(0, 6).map(val => `<td class="text-right">${formatNumber(val)}</td>`).join('')}
+        ${row.data.slice(6).map(val => `<td class="text-right hide-mobile">${formatNumber(val)}</td>`).join('')}
+        <td class="text-right font-semibold">${formatNumber(total)}</td>
+      </tr>
+    `;
+    }).join('');
 }
 
 // ===== POPULATE YEAR DROPDOWN =====
@@ -686,6 +860,15 @@ function setupEventListeners() {
     if (yearSelect) {
         yearSelect.addEventListener('change', () => {
             // Reload data for selected year
+            initDashboard();
+        });
+    }
+
+    // Data Type Select
+    const dataTypeSelect = document.getElementById('dataTypeSelect');
+    if (dataTypeSelect) {
+        dataTypeSelect.addEventListener('change', () => {
+            // Reload data for selected data type
             initDashboard();
         });
     }
