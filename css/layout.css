@@ -103,7 +103,7 @@
 }
 
 .nav-item.active {
-    background: rgba(249, 115, 22, 0.9);
+    background: var(--primary-500);
     color: #ffffff;
 }
 
@@ -197,7 +197,7 @@
     position: sticky;
     top: 0;
     z-index: var(--z-sticky);
-    backdrop-filter: blur(10px);
+
 }
 
 .header-left {
