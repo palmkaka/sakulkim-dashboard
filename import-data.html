@@ -384,6 +384,71 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="js/config.js"></script>
     <script src="js/import.js"></script>
+
+    <!-- Quick Add 2568 Data -->
+    <script>
+        // Clear all and add correct data
+        async function fixAllData() {
+            const db = firebase.firestore();
+
+            if (!confirm('จะลบข้อมูลเก่าทั้งหมดและเพิ่มข้อมูลที่ถูกต้อง ยืนยันหรือไม่?')) {
+                return;
+            }
+
+            console.log('🗑️ กำลังลบข้อมูลเก่า...');
+            const snapshot = await db.collection('statistics').get();
+            for (const doc of snapshot.docs) {
+                await doc.ref.delete();
+            }
+            console.log('✅ ลบข้อมูลเก่าแล้ว', snapshot.size, 'รายการ');
+
+            // Add 2569 data (correct values from Sheet)
+            const data2569 = [
+                { category: 'รายได้จากการขายสินค้า', total: 207767344.62 },
+                { category: 'รายได้เป้า ส่วนลด อื่นๆ', total: 7558869.06 },
+                { category: 'รวม รายได้ทั้งสิ้น', total: 215326213.68 },
+                { category: 'ต้นทุนสินค้าเพื่อขาย', total: 183864906.75 },
+                { category: 'กำไร(ขาดทุน) ขั้นต้น', total: 31461306.93 }
+            ];
+
+            for (const item of data2569) {
+                await db.collection('statistics').add({
+                    year: 2569,
+                    type: 'revenue',
+                    category: item.category,
+                    monthlyData: Array(12).fill(item.total / 12),
+                    total: item.total,
+                    importedAt: new Date().toISOString()
+                });
+            }
+            console.log('✅ เพิ่มข้อมูลปี 2569 แล้ว');
+
+            // Add 2568 data
+            await db.collection('statistics').add({
+                year: 2568,
+                type: 'revenue',
+                category: 'รายได้จากการขายสินค้า',
+                monthlyData: [21614908, 17572735, 20274452, 16301524, 16787995, 15204901, 15452943, 15738942, 16124927, 17463724, 17537331, 18292617],
+                total: 208366999,
+                importedAt: new Date().toISOString()
+            });
+
+            await db.collection('statistics').add({
+                year: 2568,
+                type: 'revenue',
+                category: 'รวม รายได้ทั้งสิ้น',
+                monthlyData: [21614908, 17572735, 20274452, 16301524, 16787995, 15204901, 15452943, 15738942, 16124927, 17463724, 17537331, 18292617],
+                total: 208366999,
+                importedAt: new Date().toISOString()
+            });
+            console.log('✅ เพิ่มข้อมูลปี 2568 แล้ว');
+
+            alert('✅ เพิ่มข้อมูลถูกต้องแล้ว! กรุณา Refresh หน้า Dashboard');
+        }
+
+        window.fixAllData = fixAllData;
+        console.log('💡 พิมพ์ fixAllData() เพื่อแก้ไขข้อมูลทั้งหมด');
+    </script>
 </body>
 
 </html>
