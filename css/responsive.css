@@ -472,3 +472,74 @@
         border: 2px solid currentColor;
     }
 }
+
+/* ==========================================================================
+   MOBILE LAYOUT FIX - แก้ไขปัญหาหน้าจอเบี้ยวและตัวเลขขาด (วางไว้ล่างสุดของไฟล์)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+    /* 1. แก้ Sidebar กินที่: ดึง Sidebar ลอยออกมา ไม่ให้ดันเนื้อหา */
+    .sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 9999;
+        /* ให้ลอยอยู่บนสุด */
+        width: 280px !important;
+        background-color: #111827;
+        /* ใส่สีพื้นหลังกันเนื้อหาทะลุ (แก้สีตาม Theme คุณได้) */
+        /* คงค่าเดิมไว้สำหรับการเลื่อนเข้าออก */
+        transition: transform 0.3s ease;
+    }
+
+    /* 2. แก้ Main Content ไม่เต็มจอ */
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        overflow-x: hidden;
+        /* ป้องกันสกรอลแนวนอนเกินจำเป็น */
+    }
+
+    /* 3. แก้ Container ให้อยู่ในกรอบ */
+    .page-content {
+        padding: 1rem !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* 4. แก้ตัวเลขขาด (สำคัญมาก) */
+    .year-value {
+        word-break: normal !important;
+        /* ยกเลิกการหั่นคำ */
+        overflow-wrap: normal !important;
+        white-space: nowrap !important;
+        /* บังคับให้อยู่บรรทัดเดียว */
+        font-size: 1.5rem !important;
+        /* ลดขนาดลงนิดหน่อยเพื่อให้พอดี */
+        display: block;
+    }
+
+    /* 5. จัดระเบียบ Card เปรียบเทียบปี */
+    .year-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 6. แก้ HTML/Body ให้ไม่โดนล็อค */
+    html,
+    body {
+        overflow-x: hidden;
+        width: 100%;
+        margin: 0;
+    }
+}
