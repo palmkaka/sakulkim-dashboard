@@ -471,6 +471,8 @@
     gap: var(--space-6);
     align-items: center;
     margin-bottom: var(--space-6);
+    width: 100%;
+    /* Ensure full width */
 }
 
 .year-card {
