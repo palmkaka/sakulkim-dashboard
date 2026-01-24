@@ -108,13 +108,8 @@ URL: https://sakulkim-dashboard.vercel.app
 - ไปหน้า **นำเข้าข้อมูล**
 - เลือกไฟล์ CSV → Preview → นำเข้า
 
-### 4. Console Command (Admin)
-```javascript
-// เปิด F12 ที่หน้า import-data.html
-fixAllData()  // ล้างและเพิ่มข้อมูลใหม่ทั้งหมด
-```
 
----
+
 
 ## 📁 โครงสร้างโปรเจค
 
