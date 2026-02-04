@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="สกุลกิม Dashboard - รอนุมัติ">
+    <title>รายการรออนุมัติ | สกุลกิม Dashboard</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+
+    <style>
+        .approval-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-4);
+            transition: all var(--transition-fast);
+        }
+
+        .approval-card:hover {
+            border-color: var(--border-medium);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .approval-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-4);
+        }
+
+        .approval-type {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+        }
+
+        .approval-amount {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+        }
+
+        .approval-amount.positive {
+            color: var(--success);
+        }
+
+        .approval-amount.negative {
+            color: var(--error);
+        }
+
+        .approval-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+            padding: var(--space-4);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-4);
+        }
+
+        .approval-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+
+        .approval-detail-label {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .approval-detail-value {
+            font-size: var(--text-sm);
+            color: var(--text-primary);
+        }
+
+        .approval-actions {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: flex-end;
+        }
+
+        .attachment-preview {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-4);
+        }
+
+        .attachment-preview img {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+        }
+
+        @media (max-width: 768px) {
+            .approval-details {
+                grid-template-columns: 1fr;
+            }
+
+            .approval-actions {
+                flex-direction: column;
+            }
+
+            .approval-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="20" x2="12" y2="10"></line>
+                            <line x1="18" y1="20" x2="18" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="16"></line>
+                        </svg>
+                    </div>
+                    <span class="sidebar-logo-text">สกุล<span>กิม</span></span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">เมนูหลัก</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="9"></rect>
+                            <rect x="14" y="3" width="7" height="5"></rect>
+                            <rect x="14" y="12" width="7" height="9"></rect>
+                            <rect x="3" y="16" width="7" height="5"></rect>
+                        </svg>
+                        <span>แดชบอร์ด</span>
+                    </a>
+                    <a href="expenses.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        <span>ค่าใช้จ่าย</span>
+                    </a>
+                    <a href="vehicle-trips.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2">
+                            </path>
+                            <circle cx="6.5" cy="16.5" r="2.5"></circle>
+                            <circle cx="16.5" cy="16.5" r="2.5"></circle>
+                        </svg>
+                        <span>เที่ยวรถ</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">จัดการข้อมูล</div>
+                    <a href="data-entry.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>เพิ่มข้อมูล</span>
+                    </a>
+                    <a href="approvals.html" class="nav-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span>รออนุมัติ</span>
+                        <span class="nav-item-badge" id="pendingCount">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section" id="adminSection">
+                    <div class="nav-section-title">ผู้ดูแลระบบ</div>
+                    <a href="users.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span>จัดการผู้ใช้</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user dropdown" id="userDropdown">
+                    <div class="avatar" id="userAvatar">SK</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="userName">Loading...</div>
+                        <div class="sidebar-user-role" id="userRole">-</div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item" id="logoutBtn" style="color: var(--error);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>ออกจากระบบ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="header-toggle" id="sidebarToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <h1 class="header-title">✅ รายการรออนุมัติ</h1>
+                </div>
+                <div class="header-right">
+                    <div class="lang-toggle">
+                        <button class="lang-btn active" data-lang="th">TH</button>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                    </div>
+                    <button class="theme-toggle" id="themeToggle">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">รายการรอตรวจสอบ</h2>
+                        <p class="page-subtitle">ตรวจสอบและอนุมัติข้อมูลที่พนักงานส่งเข้ามา</p>
+                    </div>
+                    <button class="btn btn-danger" id="clearAllBtn" onclick="clearAllEntries()">
+                        🗑️ ล้างข้อมูลทั้งหมด
+                    </button>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="stats-row"
+                    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-bottom: var(--space-6);">
+                    <div class="mini-stat"
+                        style="background: var(--bg-secondary); padding: var(--space-4); border-radius: var(--radius-lg); text-align: center;">
+                        <div class="mini-stat-value" id="pendingCount"
+                            style="font-size: 2rem; font-weight: 700; color: var(--warning);">0</div>
+                        <div class="mini-stat-label" style="color: var(--text-muted);">⏳ รอตรวจสอบ</div>
+                    </div>
+                    <div class="mini-stat"
+                        style="background: var(--bg-secondary); padding: var(--space-4); border-radius: var(--radius-lg); text-align: center;">
+                        <div class="mini-stat-value" id="approvedCount"
+                            style="font-size: 2rem; font-weight: 700; color: var(--success);">0</div>
+                        <div class="mini-stat-label" style="color: var(--text-muted);">✅ อนุมัติแล้ว</div>
+                    </div>
+                    <div class="mini-stat"
+                        style="background: var(--bg-secondary); padding: var(--space-4); border-radius: var(--radius-lg); text-align: center;">
+                        <div class="mini-stat-value" id="rejectedCount"
+                            style="font-size: 2rem; font-weight: 700; color: var(--error);">0</div>
+                        <div class="mini-stat-label" style="color: var(--text-muted);">❌ ปฏิเสธ</div>
+                    </div>
+                </div>
+
+                <!-- Pending Entries List -->
+                <div id="pendingList">
+                    <div class="text-center p-12 text-muted">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            style="margin: 0 auto var(--space-4);">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <h3 class="text-xl font-semibold mb-2">ยอดเยี่ยม!</h3>
+                        <p class="text-muted">ไม่มีรายการรออนุมัติ ทุกอย่างได้รับการตรวจสอบแล้ว</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- App Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let pendingEntries = [];
+
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            currentUser = user;
+            await auth.loadUserProfile(user.uid);
+
+            // Check if user can approve
+            if (!auth.canApprove()) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            updateUserUI();
+            setupNavigation();
+            loadPendingEntries();
+        });
+
+        function updateUserUI() {
+            const profile = auth.getUserProfile();
+            document.getElementById('userName').textContent = profile?.displayName || profile?.email || 'User';
+            document.getElementById('userRole').textContent = auth.getRoleDisplayName('th');
+            document.getElementById('userAvatar').textContent = auth.getInitials();
+        }
+
+        function setupNavigation() {
+            const adminSection = document.getElementById('adminSection');
+            if (adminSection) {
+                adminSection.style.display = auth.canManageUsers() ? 'block' : 'none';
+            }
+        }
+
+        function loadPendingEntries() {
+            // Load stats for all statuses
+            loadEntriesStats();
+
+            // Load from Firestore
+            db.collection('entries')
+                .where('status', '==', 'pending')
+                .orderBy('submittedAt', 'desc')
+                .onSnapshot(snapshot => {
+                    pendingEntries = [];
+                    snapshot.forEach(doc => {
+                        pendingEntries.push({ id: doc.id, ...doc.data() });
+                    });
+                    document.getElementById('pendingCount').textContent = pendingEntries.length;
+                    renderPendingEntries();
+                }, error => {
+                    console.error('Error loading entries:', error);
+                });
+        }
+
+        async function loadEntriesStats() {
+            try {
+                // Load approved count
+                const approvedSnapshot = await db.collection('entries')
+                    .where('status', '==', 'approved')
+                    .get();
+                document.getElementById('approvedCount').textContent = approvedSnapshot.size;
+
+                // Load rejected count
+                const rejectedSnapshot = await db.collection('entries')
+                    .where('status', '==', 'rejected')
+                    .get();
+                document.getElementById('rejectedCount').textContent = rejectedSnapshot.size;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function clearAllEntries() {
+            if (!confirm('⚠️ คุณแน่ใจหรือไม่ที่จะลบข้อมูลทั้งหมด?\n\nการดำเนินการนี้ไม่สามารถยกเลิกได้')) {
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('entries').get();
+                const batch = db.batch();
+                snapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+                alert('✅ ลบข้อมูลทั้งหมดเรียบร้อยแล้ว');
+                loadEntriesStats();
+            } catch (error) {
+                console.error('Error clearing entries:', error);
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            }
+        }
+
+
+        function renderPendingEntries() {
+            const container = document.getElementById('pendingList');
+
+            if (pendingEntries.length === 0) {
+                container.innerHTML = `
+          <div class="text-center p-12 text-muted">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto var(--space-4); color: var(--success);">
+              <polyline points="9 11 12 14 22 4"></polyline>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+            <h3 class="text-xl font-semibold mb-2" style="color: var(--success);">ยอดเยี่ยม!</h3>
+            <p class="text-muted">ไม่มีรายการรออนุมัติ ทุกอย่างได้รับการตรวจสอบแล้ว</p>
+          </div>
+        `;
+                return;
+            }
+
+            container.innerHTML = pendingEntries.map(entry => {
+                const typeEmoji = entry.type === 'revenue' ? '💰' : entry.type === 'expense' ? '💸' : '🚗';
+                const typeLabel = entry.type === 'revenue' ? 'รายได้' : entry.type === 'expense' ? 'ค่าใช้จ่าย' : 'เที่ยวรถ';
+                const amount = entry.amount || entry.revenue || 0;
+                const amountClass = entry.type === 'expense' ? 'negative' : 'positive';
+
+                return `
+          <div class="approval-card" id="entry-${entry.id}">
+            <div class="approval-header">
+              <div>
+                <div class="approval-type">${typeEmoji} ${typeLabel}</div>
+                <p class="text-muted text-sm mt-1">${entry.description || 'ไม่มีคำอธิบาย'}</p>
+              </div>
+              <div class="approval-amount ${amountClass}">฿${amount.toLocaleString()}</div>
+            </div>
+            
+            <div class="approval-details">
+              <div class="approval-detail-item">
+                <span class="approval-detail-label">วันที่</span>
+                <span class="approval-detail-value">${formatDate(entry.date)}</span>
+              </div>
+              <div class="approval-detail-item">
+                <span class="approval-detail-label">ส่งโดย</span>
+                <span class="approval-detail-value">${entry.submittedBy}</span>
+              </div>
+              <div class="approval-detail-item">
+                <span class="approval-detail-label">เวลาที่ส่ง</span>
+                <span class="approval-detail-value">${formatDateTime(entry.submittedAt)}</span>
+              </div>
+              ${entry.type === 'trip' ? `
+              <div class="approval-detail-item">
+                <span class="approval-detail-label">เส้นทาง</span>
+                <span class="approval-detail-value">${entry.origin} → ${entry.destination}</span>
+              </div>
+              ` : `
+              <div class="approval-detail-item">
+                <span class="approval-detail-label">หมวดหมู่</span>
+                <span class="approval-detail-value">${getCategoryLabel(entry.category)}</span>
+              </div>
+              `}
+            </div>
+            
+            <div class="approval-actions">
+              <button class="btn btn-danger" onclick="rejectEntry('${entry.id}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                ปฏิเสธ
+              </button>
+              <button class="btn btn-primary" onclick="approveEntry('${entry.id}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                อนุมัติ
+              </button>
+            </div>
+          </div>
+        `;
+            }).join('');
+        }
+
+        function approveEntry(entryId) {
+            if (!confirm('ยืนยันการอนุมัติรายการนี้?')) return;
+
+            updateEntryStatus(entryId, 'approved');
+            showToast('อนุมัติรายการเรียบร้อย', 'success');
+        }
+
+        function rejectEntry(entryId) {
+            const reason = prompt('เหตุผลในการปฏิเสธ (ถ้ามี):');
+            if (reason === null) return; // Cancelled
+
+            updateEntryStatus(entryId, 'rejected', reason);
+            showToast('ปฏิเสธรายการเรียบร้อย', 'info');
+        }
+
+        async function updateEntryStatus(entryId, status, reason = '') {
+            try {
+                const updateData = {
+                    status: status,
+                    reviewedBy: currentUser.email,
+                    reviewedAt: new Date().toISOString()
+                };
+                if (reason) updateData.rejectReason = reason;
+
+                await db.collection('entries').doc(entryId).update(updateData);
+
+                // Animate removal
+                const card = document.getElementById(`entry-${entryId}`);
+                if (card) {
+                    card.style.transition = 'all 0.3s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateX(100px)';
+                }
+            } catch (error) {
+                console.error('Error updating entry:', error);
+                showToast('เกิดข้อผิดพลาด', 'error');
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            // Simple toast notification
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'success' ? 'success' : 'info'}`;
+            toast.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000; animation: fadeInUp 0.3s ease;';
+            toast.innerHTML = `<span>${message}</span>`;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'fadeInUp 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleString('th-TH', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getCategoryLabel(category) {
+            const labels = {
+                'product_sales': 'ขายสินค้า',
+                'delivery_fee': 'ค่าจัดส่ง',
+                'other_income': 'รายได้อื่น',
+                'employee': 'พนักงาน',
+                'donation': 'บริจาคและรอมาฎอน',
+                'advertising': 'ค่าโฆษณาและส่งเสริม',
+                'depreciation': 'ค่าเสื่อมราคา',
+                'tax': 'ภาษีและอากร',
+                'general': 'บริการทั่วไป',
+                'other_expense': 'ค่าใช้จ่ายอื่น'
+            };
+            return labels[category] || category || '-';
+        }
+
+        // Theme Toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            document.querySelector('.sun-icon').classList.toggle('hidden');
+            document.querySelector('.moon-icon').classList.toggle('hidden');
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        if (savedTheme === 'light') {
+            document.querySelector('.sun-icon').classList.add('hidden');
+            document.querySelector('.moon-icon').classList.remove('hidden');
+        }
+
+        // Sidebar Toggle
+        document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        });
+        document.getElementById('sidebarOverlay')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        });
+
+        // Logout
+        document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+            await firebase.auth().signOut();
+            window.location.href = 'index.html';
+        });
+
+        // User dropdown
+        document.getElementById('userDropdown')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('active');
+        });
+        document.addEventListener('click', () => {
+            document.getElementById('userDropdown')?.classList.remove('active');
+        });
+    </script>
+</body>
+
+</html>

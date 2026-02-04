@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="สกุลกิม Dashboard - ค่าใช้จ่าย">
+    <title>ค่าใช้จ่าย | สกุลกิม Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+</head>
+
+<body>
+    <div class="app-layout">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="20" x2="12" y2="10"></line>
+                            <line x1="18" y1="20" x2="18" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="16"></line>
+                        </svg>
+                    </div>
+                    <span class="sidebar-logo-text">สกุล<span>กิม</span></span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">เมนูหลัก</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="9"></rect>
+                            <rect x="14" y="3" width="7" height="5"></rect>
+                            <rect x="14" y="12" width="7" height="9"></rect>
+                            <rect x="3" y="16" width="7" height="5"></rect>
+                        </svg>
+                        <span>แดชบอร์ด</span>
+                    </a>
+                    <a href="expenses.html" class="nav-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        <span>ค่าใช้จ่าย</span>
+                    </a>
+                    <a href="vehicle-trips.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2">
+                            </path>
+                            <circle cx="6.5" cy="16.5" r="2.5"></circle>
+                            <circle cx="16.5" cy="16.5" r="2.5"></circle>
+                        </svg>
+                        <span>เที่ยวรถ</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">จัดการข้อมูล</div>
+                    <a href="data-entry.html" class="nav-item" id="navDataEntry">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>เพิ่มข้อมูล</span>
+                    </a>
+                    <a href="approvals.html" class="nav-item" id="navApprovals">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span>รออนุมัติ</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user dropdown" id="userDropdown">
+                    <div class="avatar" id="userAvatar">SK</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="userName">Loading...</div>
+                        <div class="sidebar-user-role" id="userRole">-</div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item" id="logoutBtn" style="color: var(--error);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>ออกจากระบบ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="header-toggle" id="sidebarToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <h1 class="header-title">💸 ค่าใช้จ่าย</h1>
+                </div>
+                <div class="header-right">
+                    <div class="lang-toggle">
+                        <button class="lang-btn active" data-lang="th">TH</button>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                    </div>
+                    <button class="theme-toggle" id="themeToggle">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">รายละเอียดค่าใช้จ่าย</h2>
+                        <p class="page-subtitle">สรุปค่าใช้จ่ายแยกตามหมวดหมู่</p>
+                    </div>
+                    <div class="page-actions">
+                        <select class="form-select" id="yearSelect" style="width: auto;">
+                            <option value="2569">ปี 2569</option>
+                            <option value="2568">ปี 2568</option>
+                        </select>
+                        <button class="btn btn-outline" id="exportBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            ส่งออก
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="stat-card accent">
+                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="var(--accent-400)" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-label">ค่าใช้จ่ายรวม</div>
+                        <div class="stat-value" id="totalExpenses">฿ 23,488,211.80</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="3" y1="9" x2="21" y2="9"></line>
+                                <line x1="9" y1="21" x2="9" y2="9"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-label">หมวดหมู่ทั้งหมด</div>
+                        <div class="stat-value">7</div>
+                    </div>
+
+                    <div class="stat-card secondary">
+                        <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="var(--secondary-400)" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M12 20V10"></path>
+                                <path d="M18 20V4"></path>
+                                <path d="M6 20v-4"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-label">% ของรายได้</div>
+                        <div class="stat-value" id="expensePercent">11.7%</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">ค่าใช้จ่ายรายเดือน</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="monthlyExpenseChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">สัดส่วนตามหมวดหมู่</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expense Table -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">รายละเอียดค่าใช้จ่ายรายเดือน</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="table" id="expenseTable">
+                            <thead>
+                                <tr>
+                                    <th>หมวดหมู่</th>
+                                    <th class="text-right">ม.ค.</th>
+                                    <th class="text-right">ก.พ.</th>
+                                    <th class="text-right">มี.ค.</th>
+                                    <th class="text-right">เม.ย.</th>
+                                    <th class="text-right">พ.ค.</th>
+                                    <th class="text-right">มิ.ย.</th>
+                                    <th class="text-right hide-mobile">ก.ค.</th>
+                                    <th class="text-right">รวม</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenseTableBody">
+                                <tr>
+                                    <td>พนักงาน</td>
+                                    <td class="text-right">2,741,968</td>
+                                    <td class="text-right">315,422</td>
+                                    <td class="text-right">194,475</td>
+                                    <td class="text-right">261,819</td>
+                                    <td class="text-right">100,175</td>
+                                    <td class="text-right">112,076</td>
+                                    <td class="text-right hide-mobile">28,886</td>
+                                    <td class="text-right font-semibold">3,754,821</td>
+                                </tr>
+                                <tr>
+                                    <td>บริจาคและรอมาฎอน</td>
+                                    <td class="text-right">881,159</td>
+                                    <td class="text-right">312,115</td>
+                                    <td class="text-right">197,892</td>
+                                    <td class="text-right">197,358</td>
+                                    <td class="text-right">31,528</td>
+                                    <td class="text-right">106,081</td>
+                                    <td class="text-right hide-mobile">29,579</td>
+                                    <td class="text-right font-semibold">1,755,712</td>
+                                </tr>
+                                <tr>
+                                    <td>ค่าโฆษณาและส่งเสริม</td>
+                                    <td class="text-right">707,318</td>
+                                    <td class="text-right">394,137</td>
+                                    <td class="text-right">199,989</td>
+                                    <td class="text-right">176,548</td>
+                                    <td class="text-right">64,430</td>
+                                    <td class="text-right">163,419</td>
+                                    <td class="text-right hide-mobile">68,612</td>
+                                    <td class="text-right font-semibold">1,774,453</td>
+                                </tr>
+                                <tr>
+                                    <td>ค่าเสื่อมราคา</td>
+                                    <td class="text-right">792,836</td>
+                                    <td class="text-right">177,739</td>
+                                    <td class="text-right">203,303</td>
+                                    <td class="text-right">124,006</td>
+                                    <td class="text-right">45,547</td>
+                                    <td class="text-right">89,756</td>
+                                    <td class="text-right hide-mobile">29,323</td>
+                                    <td class="text-right font-semibold">1,462,510</td>
+                                </tr>
+                                <tr>
+                                    <td>ภาษีและอากร</td>
+                                    <td class="text-right">743,570</td>
+                                    <td class="text-right">218,338</td>
+                                    <td class="text-right">201,102</td>
+                                    <td class="text-right">220,631</td>
+                                    <td class="text-right">47,670</td>
+                                    <td class="text-right">68,963</td>
+                                    <td class="text-right hide-mobile">129,684</td>
+                                    <td class="text-right font-semibold">1,629,958</td>
+                                </tr>
+                                <tr>
+                                    <td>บริการทั่วไป</td>
+                                    <td class="text-right">822,604</td>
+                                    <td class="text-right">168,314</td>
+                                    <td class="text-right">196,268</td>
+                                    <td class="text-right">174,228</td>
+                                    <td class="text-right">111,159</td>
+                                    <td class="text-right">170,112</td>
+                                    <td class="text-right hide-mobile">102,356</td>
+                                    <td class="text-right font-semibold">1,745,041</td>
+                                </tr>
+                                <tr>
+                                    <td>กำไรเบ็ดเสร็จอื่น</td>
+                                    <td class="text-right">807,878</td>
+                                    <td class="text-right">265,081</td>
+                                    <td class="text-right">198,665</td>
+                                    <td class="text-right">218,316</td>
+                                    <td class="text-right">38,784</td>
+                                    <td class="text-right">71,336</td>
+                                    <td class="text-right hide-mobile">43,930</td>
+                                    <td class="text-right font-semibold">1,643,990</td>
+                                </tr>
+                                <tr class="font-semibold" style="background: var(--bg-tertiary);">
+                                    <td>รวมทั้งหมด</td>
+                                    <td class="text-right">7,497,333</td>
+                                    <td class="text-right">1,851,146</td>
+                                    <td class="text-right">1,391,694</td>
+                                    <td class="text-right">1,372,906</td>
+                                    <td class="text-right">439,293</td>
+                                    <td class="text-right">781,743</td>
+                                    <td class="text-right hide-mobile">432,370</td>
+                                    <td class="text-right" style="color: var(--accent-400);">23,488,212</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script src="js/config.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        firebase.initializeApp(firebaseConfig);
+
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            await auth.loadUserProfile(user.uid);
+
+            if (!auth.canViewDashboard()) {
+                window.location.href = 'my-entries.html';
+                return;
+            }
+
+            updateUserUI();
+            initCharts();
+        });
+
+        function updateUserUI() {
+            const profile = auth.getUserProfile();
+            document.getElementById('userName').textContent = profile?.displayName || profile?.email || 'User';
+            document.getElementById('userRole').textContent = auth.getRoleDisplayName('th');
+            document.getElementById('userAvatar').textContent = auth.getInitials();
+
+            document.getElementById('navDataEntry').style.display = auth.canAddData() ? 'flex' : 'none';
+            document.getElementById('navApprovals').style.display = auth.canApprove() ? 'flex' : 'none';
+        }
+
+        function initCharts() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+            const gridColor = isDark ? 'rgba(148, 163, 184, 0.1)' : 'rgba(15, 23, 42, 0.1)';
+
+            // Monthly Expense Chart
+            new Chart(document.getElementById('monthlyExpenseChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.'],
+                    datasets: [{
+                        label: 'ค่าใช้จ่าย',
+                        data: [7497333, 1851146, 1391694, 1372906, 439293, 781743, 432370],
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: textColor } },
+                        y: {
+                            grid: { color: gridColor },
+                            ticks: {
+                                color: textColor,
+                                callback: v => (v / 1000000).toFixed(1) + 'M'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Category Chart
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['พนักงาน', 'บริจาคฯ', 'โฆษณา', 'ค่าเสื่อม', 'ภาษี', 'บริการ', 'อื่นๆ'],
+                    datasets: [{
+                        data: [3754821, 1755712, 1774453, 1462510, 1629958, 1745041, 1643990],
+                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: textColor, usePointStyle: true }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Theme Toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.querySelector('.sun-icon').classList.toggle('hidden');
+            document.querySelector('.moon-icon').classList.toggle('hidden');
+        });
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        if (savedTheme === 'light') {
+            document.querySelector('.sun-icon').classList.add('hidden');
+            document.querySelector('.moon-icon').classList.remove('hidden');
+        }
+
+        document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        });
+        document.getElementById('sidebarOverlay')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        });
+
+        document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+            await firebase.auth().signOut();
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('userDropdown')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('active');
+        });
+        document.addEventListener('click', () => {
+            document.getElementById('userDropdown')?.classList.remove('active');
+        });
+    </script>
+</body>
+
+</html>

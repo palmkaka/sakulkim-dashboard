@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>วิเคราะห์ยอดขาย | สกุลกิม Dashboard</title>
+    <!-- CSS Links -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- Sidebar matches dashboard -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header"><span class="sidebar-logo-text">สกุล<span>กิม</span></span></div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">เมนูหลัก</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            class="icon-sm" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="9"></rect>
+                            <rect x="14" y="3" width="7" height="5"></rect>
+                            <rect x="14" y="12" width="7" height="9"></rect>
+                            <rect x="3" y="16" width="7" height="5"></rect>
+                        </svg>
+                        <span>ภาพรวม (Executive)</span>
+                    </a>
+                    <a href="sales.html" class="nav-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        <span>ยอดขาย (Sales)</span>
+                    </a>
+                    <a href="hr.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span>พนักงาน (HR)</span>
+                    </a>
+                    <a href="marketing.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            class="icon-sm" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path
+                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                            </path>
+                        </svg>
+                        <span>การตลาด & KPI</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">ข้อมูล</div>
+                    <a href="input.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>กรอกข้อมูล (Input)</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">วิเคราะห์ยอดขาย (Sales Performance)</h1>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <!-- Overview Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">ยอดขายรวม (เดือนนี้)</div>
+                        <div class="stat-value" id="monthSales">฿0.00</div>
+                        <div class="stat-change" id="salesTargetDiff">เป้าหมาย: ฿1.0M (0%)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">ช่องทางขายดีที่สุด</div>
+                        <div class="stat-value" id="bestChannel">-</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid two-columns">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">สัดส่วนยอดขายตามช่องทาง (By Channel)</h3>
+                        </div>
+                        <div class="chart-container"><canvas id="channelChart"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">เปรียบเทียบ Target vs Actual</h3>
+                        </div>
+                        <div class="chart-container"><canvas id="targetChart"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="chart-card mt-6">
+                    <div class="chart-header">
+                        <h3 class="chart-title">แนวโน้มการเติบโตรายช่องทาง (Growth Trend)</h3>
+                    </div>
+                    <div class="chart-container"><canvas id="trendChart"></canvas></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/sales.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="สกุลกิม Dashboard - ตั้งค่าโปรไฟล์">
+    <title>ตั้งค่าโปรไฟล์ | สกุลกิม Dashboard</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+</head>
+
+<body>
+    <div class="auth-layout">
+        <!-- Auth Card -->
+        <div class="auth-card">
+            <!-- Theme & Language Toggle -->
+            <div class="auth-options">
+                <div class="lang-toggle">
+                    <button class="lang-btn active" data-lang="th">TH</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+                <button class="theme-toggle" id="themeToggle" title="สลับธีม">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Header -->
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <h1 class="auth-title">ยินดีต้อนรับ!</h1>
+                <p class="auth-subtitle">กรุณาตั้งค่าโปรไฟล์ของคุณ</p>
+            </div>
+
+            <!-- Profile Setup Form -->
+            <form id="profileForm" class="auth-form">
+                <div class="form-group">
+                    <label class="form-label" for="email">อีเมล</label>
+                    <input type="email" id="email" class="form-input" readonly
+                        style="background: var(--bg-tertiary); cursor: not-allowed;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="displayName">ชื่อที่แสดง <span
+                            style="color: var(--error);">*</span></label>
+                    <input type="text" id="displayName" class="form-input" placeholder="กรอกชื่อ-นามสกุล" required
+                        autocomplete="name">
+                    <p class="form-hint" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                        ชื่อนี้จะแสดงให้ผู้อื่นเห็น
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">บทบาท</label>
+                    <div
+                        style="padding: 12px; background: var(--bg-tertiary); border-radius: var(--radius-lg); color: var(--text-secondary);">
+                        👤 พนักงาน
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                            ผู้ดูแลระบบจะกำหนดสิทธิ์ให้ภายหลัง
+                        </p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-full" id="submitBtn">
+                    <span id="btnText">บันทึกและเริ่มใช้งาน</span>
+                    <span id="btnLoading" class="hidden">
+                        <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                        </svg>
+                    </span>
+                </button>
+            </form>
+
+            <!-- Footer -->
+            <div class="auth-footer" style="margin-top: var(--space-6);">
+                <p style="font-size: 12px; color: var(--text-muted);">
+                    Evolution HRD 2026
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- App Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/i18n.js"></script>
+
+    <script>
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Check auth state
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                // Not logged in, redirect to login
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Check if profile already exists
+            const profileDoc = await db.collection('users').doc(user.uid).get();
+            if (profileDoc.exists && profileDoc.data().displayName) {
+                // Profile already set, redirect to my-entries
+                window.location.href = 'my-entries.html';
+                return;
+            }
+
+            // Set email field
+            document.getElementById('email').value = user.email;
+
+            // Pre-fill display name if available from Google
+            if (user.displayName) {
+                document.getElementById('displayName').value = user.displayName;
+            }
+        });
+
+        // Form submission
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const displayName = document.getElementById('displayName').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoading = document.getElementById('btnLoading');
+
+            if (!displayName) {
+                alert('กรุณากรอกชื่อที่แสดง');
+                return;
+            }
+
+            // Show loading
+            submitBtn.disabled = true;
+            btnText.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+
+            try {
+                const user = firebase.auth().currentUser;
+
+                // Save to Firestore
+                await db.collection('users').doc(user.uid).set({
+                    email: user.email,
+                    displayName: displayName,
+                    role: 'customer', // Default role: employee
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                // Update Firebase Auth display name
+                await user.updateProfile({
+                    displayName: displayName
+                });
+
+                // Redirect to my-entries
+                window.location.href = 'my-entries.html';
+
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+
+                // Reset button
+                submitBtn.disabled = false;
+                btnText.classList.remove('hidden');
+                btnLoading.classList.add('hidden');
+            }
+        });
+
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            updateThemeIcon(next);
+        });
+
+        function updateThemeIcon(theme) {
+            const sunIcon = document.querySelector('.sun-icon');
+            const moonIcon = document.querySelector('.moon-icon');
+            if (theme === 'dark') {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+
+</html>

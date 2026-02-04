@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกข้อมูล | สกุลกิม Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <style>
+        .tabs {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-6);
+            border-bottom: 1px solid var(--border-medium);
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        .tab-btn {
+            padding: var(--space-3) var(--space-4);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-weight: var(--font-medium);
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-500);
+            border-bottom-color: var(--primary-500);
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <span class="sidebar-logo-text">สกุล<span>กิม</span></span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <!-- Navigation will be injected or matches dashboard.html -->
+                <div class="nav-section">
+                    <div class="nav-section-title">เมนูหลัก</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="9"></rect>
+                            <rect x="14" y="3" width="7" height="5"></rect>
+                            <rect x="14" y="12" width="7" height="9"></rect>
+                            <rect x="3" y="16" width="7" height="5"></rect>
+                        </svg>
+                        <span>ภาพรวม (Executive)</span>
+                    </a>
+                    <a href="sales.html" class="nav-item">
+                        <span>ยอดขาย (Sales)</span>
+                    </a>
+                    <a href="hr.html" class="nav-item">
+                        <span>พนักงาน (HR)</span>
+                    </a>
+                    <a href="marketing.html" class="nav-item">
+                        <span>การตลาด & KPI</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">ข้อมูล</div>
+                    <a href="input.html" class="nav-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>กรอกข้อมูล (Input)</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">บันทึกข้อมูล</h1>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <div class="card">
+                    <div class="tabs">
+                        <div class="tab-btn active" onclick="switchTab('sales')">💰 ยอดขาย (Sales)</div>
+                        <div class="tab-btn" onclick="switchTab('expenses')">💸 ค่าใช้จ่าย (Expenses)</div>
+                        <div class="tab-btn" onclick="switchTab('hr')">👥 พนักงาน (HR)</div>
+                        <div class="tab-btn" onclick="switchTab('kpi')">📊 Goals & KPI</div>
+                    </div>
+
+                    <!-- SALES FORM -->
+                    <form id="salesForm" class="form-section active" onsubmit="submitSales(event)">
+                        <div class="form-group">
+                            <label class="form-label">ช่องทางการขาย *</label>
+                            <select class="form-select" id="salesChannel" required>
+                                <option value="retail">🏪 หน้าร้าน (Retail)</option>
+                                <option value="wholesale">🏭 ขายส่ง (Wholesale)</option>
+                                <option value="online">🌐 ออนไลน์ (Online)</option>
+                                <option value="project">🏗️ โครงการ (Project)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">วันที่ *</label>
+                            <input type="date" class="form-input" id="salesDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ยอดขายรวม (บาท) *</label>
+                            <input type="number" class="form-input" id="salesAmount" placeholder="0.00" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">บันทึกยอดขาย</button>
+                    </form>
+
+                    <!-- EXPENSES FORM -->
+                    <form id="expenseForm" class="form-section" onsubmit="submitExpense(event)">
+                        <div class="form-group">
+                            <label class="form-label">หมวดหมู่ *</label>
+                            <select class="form-select" id="expenseCategory" required>
+                                <option value="cogs">📦 ต้นทุนสินค้า (COGS)</option>
+                                <option value="logistics">🚚 ขนส่ง (Logistics)</option>
+                                <option value="marketing">📢 การตลาด (Marketing)</option>
+                                <option value="payroll">👥 เงินเดือน (Payroll)</option>
+                                <option value="commission">💸 ค่าคอมมิชชั่น (Commission)</option>
+                                <option value="operation">🏢 ดำเนินงาน (Operation)</option>
+                                <option value="tax">🏛️ ภาษี (Tax)</option>
+                                <option value="other">📝 อื่นๆ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">วันที่ *</label>
+                            <input type="date" class="form-input" id="expenseDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">จำนวนเงิน (บาท) *</label>
+                            <input type="number" class="form-input" id="expenseAmount" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">รายละเอียด</label>
+                            <input type="text" class="form-input" id="expenseDesc" placeholder="อธิบายเพิ่มเติม...">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">บันทึกค่าใช้จ่าย</button>
+                    </form>
+
+                    <!-- HR FORM -->
+                    <form id="hrForm" class="form-section" onsubmit="submitHR(event)">
+                        <div class="form-group">
+                            <label class="form-label">เดือน/ปี *</label>
+                            <input type="month" class="form-input" id="hrMonth" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">จำนวนพนักงาน (Headcount) *</label>
+                            <input type="number" class="form-input" id="hrHeadcount" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">พนักงานลาออก (Turnover) (คน)</label>
+                            <input type="number" class="form-input" id="hrResigned" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ยอดจ่ายเงินเดือนรวม (Total Payroll)</label>
+                            <input type="number" class="form-input" id="hrPayroll" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">อัปเดตข้อมูล HR</button>
+                    </form>
+
+                    <!-- KPI FORM -->
+                    <form id="kpiForm" class="form-section" onsubmit="submitKPI(event)">
+                        <div class="form-group">
+                            <label class="form-label">เดือน/ปี *</label>
+                            <input type="month" class="form-input" id="kpiMonth" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">แผนก *</label>
+                            <select class="form-select" id="kpiDept" required>
+                                <option value="sales">Sales</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="admin">Admin</option>
+                                <option value="logistics">Logistics</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">คะแนน KPI (0-100) *</label>
+                            <input type="number" class="form-input" id="kpiScore" min="0" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">หมายเหตุ</label>
+                            <input type="text" class="form-input" id="kpiNote">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">บันทึก KPI</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Init dates
+        document.getElementById('salesDate').valueAsDate = new Date();
+        document.getElementById('expenseDate').valueAsDate = new Date();
+
+        function switchTab(tabName) {
+            // Update Headers
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Show Form
+            document.querySelectorAll('.form-section').forEach(form => form.classList.remove('active'));
+            document.getElementById(tabName + 'Form').classList.add('active');
+        }
+
+        async function submitSales(e) {
+            e.preventDefault();
+            const data = {
+                type: 'revenue',
+                channel: document.getElementById('salesChannel').value,
+                date: document.getElementById('salesDate').value,
+                amount: parseFloat(document.getElementById('salesAmount').value),
+                category: 'sales', // Default category
+                submittedAt: new Date().toISOString()
+            };
+            await db.collection('entries').add(data);
+            alert('บันทึกยอดขายเรียบร้อย');
+            e.target.reset();
+        }
+
+        async function submitExpense(e) {
+            e.preventDefault();
+            const data = {
+                type: 'expense',
+                category: document.getElementById('expenseCategory').value,
+                date: document.getElementById('expenseDate').value,
+                amount: parseFloat(document.getElementById('expenseAmount').value),
+                description: document.getElementById('expenseDesc').value,
+                submittedAt: new Date().toISOString()
+            };
+            await db.collection('entries').add(data);
+            alert('บันทึกค่าใช้จ่ายเรียบร้อย');
+            e.target.reset();
+        }
+
+        async function submitHR(e) {
+            e.preventDefault();
+            const month = document.getElementById('hrMonth').value; // YYYY-MM
+            const data = {
+                period: month,
+                headcount: parseInt(document.getElementById('hrHeadcount').value),
+                resigned: parseInt(document.getElementById('hrResigned').value),
+                payroll: parseFloat(document.getElementById('hrPayroll').value),
+                submittedAt: new Date().toISOString()
+            };
+            // Use set to overwrite monthly data
+            await db.collection('hr_stats').doc(month).set(data);
+
+            // Auto-sync Payroll to Expenses (optional: check if exists first to avoid dupes)
+            // For simplicity in this version, we add a new entry. In production, might want to update existing.
+            const payrollData = {
+                type: 'expense',
+                category: 'payroll',
+                date: month + '-28', // Default to end of month
+                amount: parseFloat(document.getElementById('hrPayroll').value),
+                description: `Payroll for ${month}`,
+                submittedAt: new Date().toISOString()
+            };
+            await db.collection('entries').add(payrollData);
+
+            alert('อัปเดตข้อมูล HR และบันทึกค่าใช้จ่ายเงินเดือนเรียบร้อย');
+        }
+
+        async function submitKPI(e) {
+            e.preventDefault();
+            const month = document.getElementById('kpiMonth').value;
+            const dept = document.getElementById('kpiDept').value;
+            const data = {
+                period: month,
+                department: dept,
+                score: parseInt(document.getElementById('kpiScore').value),
+                note: document.getElementById('kpiNote').value,
+                submittedAt: new Date().toISOString()
+            };
+            await db.collection('kpi_logs').add(data);
+            alert('บันทึก KPI เรียบร้อย');
+            e.target.reset();
+        }
+    </script>
+</body>
+
+</html>
