@@ -70,9 +70,8 @@ export function Sidebar() {
                 <div className="flex h-full flex-col">
                     {/* Logo Section */}
                     <div className="flex h-16 items-center border-b px-6">
-                        <Link href="/" className="flex items-center gap-3 font-bold text-lg">
-                            {/* <Hexagon className="h-6 w-6 text-indigo-600 fill-indigo-600" /> */}
-                            <img src="/logo.jpg" alt="Logo" className="h-8 w-8 object-contain rounded-md" />
+                        <Link href="/" className="flex items-center gap-3 font-bold text-xl text-indigo-900">
+                            {/* Logo removed as requested */}
                             <span>Sakulkim Dashboard</span>
                         </Link>
                     </div>
