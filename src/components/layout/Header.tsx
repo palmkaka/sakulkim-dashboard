@@ -10,6 +10,7 @@ import {
     Target,
     Megaphone
 } from "lucide-react";
+import { auth } from "@/lib/firebase"; // Import Auth
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -177,13 +178,29 @@ export function Header() {
 
                     <div className="flex items-center gap-3 border-l pl-4 ml-2">
                         <div className="text-right hidden md:block">
-                            <p className="text-sm font-medium leading-none">Admin User</p>
-                            <p className="text-xs text-muted-foreground">admin@antigravity.com</p>
+                            <p className="text-sm font-medium leading-none">
+                                {auth.currentUser?.displayName || "User"}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                {auth.currentUser?.email || "No email"}
+                            </p>
                         </div>
                         <Avatar>
-                            <AvatarImage src="/avatars/01.png" alt="@admin" />
-                            <AvatarFallback>AD</AvatarFallback>
+                            <AvatarImage src={auth.currentUser?.photoURL || ""} alt={auth.currentUser?.displayName || "User"} />
+                            <AvatarFallback>
+                                {auth.currentUser?.displayName ? auth.currentUser.displayName.charAt(0).toUpperCase() : "U"}
+                            </AvatarFallback>
                         </Avatar>
+                        {/* Add Sign Out Button for convenience */}
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => auth.signOut()}
+                            className="text-gray-400 hover:text-red-500"
+                            title="Sign Out"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
+                        </Button>
                     </div>
                 </div>
             </header>
