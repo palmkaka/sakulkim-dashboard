@@ -41,11 +41,10 @@ export function Sidebar() {
 
     return (
         <>
-            {/* Mobile Hamburger Button */}
             <div className="md:hidden fixed top-0 left-0 z-50 p-4 w-full bg-white border-b flex items-center justify-between">
-                <div className="flex items-center gap-2 font-bold text-xl">
-                    <Hexagon className="h-6 w-6 text-indigo-600 fill-indigo-600" />
-                    <span>Antigravity</span>
+                <div className="flex items-center gap-3 font-bold text-lg">
+                    <img src="/logo.jpg" alt="Logo" className="h-8 w-8 object-contain rounded-md" />
+                    <span>Sakulkim Dashboard</span>
                 </div>
                 <Button variant="ghost" size="icon" onClick={toggleSidebar}>
                     {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -71,9 +70,10 @@ export function Sidebar() {
                 <div className="flex h-full flex-col">
                     {/* Logo Section */}
                     <div className="flex h-16 items-center border-b px-6">
-                        <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-                            <Hexagon className="h-6 w-6 text-indigo-600 fill-indigo-600" />
-                            <span>Antigravity</span>
+                        <Link href="/" className="flex items-center gap-3 font-bold text-lg">
+                            {/* <Hexagon className="h-6 w-6 text-indigo-600 fill-indigo-600" /> */}
+                            <img src="/logo.jpg" alt="Logo" className="h-8 w-8 object-contain rounded-md" />
+                            <span>Sakulkim Dashboard</span>
                         </Link>
                     </div>
 

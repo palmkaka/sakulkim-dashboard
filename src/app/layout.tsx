@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Antigravity Dashboard",
+  title: "Sakulkim Dashboard",
   description: "Business & HR Analytics Dashboard",
 };
 
