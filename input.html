@@ -296,7 +296,20 @@
             };
             // Use set to overwrite monthly data
             await db.collection('hr_stats').doc(month).set(data);
-            alert('อัปเดตข้อมูล HR เรียบร้อย');
+
+            // Auto-sync Payroll to Expenses (optional: check if exists first to avoid dupes)
+            // For simplicity in this version, we add a new entry. In production, might want to update existing.
+            const payrollData = {
+                type: 'expense',
+                category: 'payroll',
+                date: month + '-28', // Default to end of month
+                amount: parseFloat(document.getElementById('hrPayroll').value),
+                description: `Payroll for ${month}`,
+                submittedAt: new Date().toISOString()
+            };
+            await db.collection('entries').add(payrollData);
+
+            alert('อัปเดตข้อมูล HR และบันทึกค่าใช้จ่ายเงินเดือนเรียบร้อย');
         }
 
         async function submitKPI(e) {

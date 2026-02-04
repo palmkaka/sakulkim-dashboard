@@ -439,41 +439,46 @@ function updateStatsCardsByYear(year) {
         return buddhistYear === year;
     });
 
-    // Calculate totals
+    // Calculate lists
     const revenueEntries = yearEntries.filter(e => e.type === 'revenue');
     const expenseEntries = yearEntries.filter(e => e.type === 'expense');
-    const tripEntries = yearEntries.filter(e => e.type === 'trip');
 
+    // 1. Total Revenue
     const totalRevenue = revenueEntries.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
-    const totalExpenses = expenseEntries.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
-    const tripRevenue = tripEntries.reduce((sum, e) => sum + (parseFloat(e.revenue) || 0), 0);
-    const tripFuel = tripEntries.reduce((sum, e) => sum + (parseFloat(e.fuelCost) || 0), 0);
 
-    const totalAllRevenue = totalRevenue + tripRevenue;
-    const totalAllExpenses = totalExpenses + tripFuel;
-    const netProfit = totalAllRevenue - totalAllExpenses;
+    // 2. Cost of Goods Sold (COGS)
+    // Identify COGS from expenses where category is 'cogs' (defined in config.js)
+    const cogsEntries = expenseEntries.filter(e => e.category === 'cogs');
+    const totalCOGS = cogsEntries.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
 
-    // Estimate COGS (85% of revenue as placeholder)
-    const totalCOGS = totalAllRevenue * 0.85;
+    // 3. Operating Expenses (All other expenses)
+    const otherExpenseEntries = expenseEntries.filter(e => e.category !== 'cogs');
+    const totalOperatingExpenses = otherExpenseEntries.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
 
-    // Update stats
-    updateStatValue('totalRevenue', totalAllRevenue);
+    // 4. Total Expenses (COGS + Operating)
+    const totalExpenses = totalCOGS + totalOperatingExpenses;
+
+    // 5. Net Profit
+    const netProfit = totalRevenue - totalExpenses;
+
+    // Update stats UI
+    updateStatValue('totalRevenue', totalRevenue);
     updateStatValue('totalCOGS', totalCOGS);
-    updateStatValue('totalExpenses', totalAllExpenses);
+    updateStatValue('totalExpenses', totalExpenses);
     updateStatValue('netProfit', netProfit);
 
     // Update percentages
-    const cogsPercentage = totalAllRevenue > 0 ? ((totalCOGS / totalAllRevenue) * 100).toFixed(1) : '0';
-    const expensesPercentage = totalAllRevenue > 0 ? ((totalAllExpenses / totalAllRevenue) * 100).toFixed(1) : '0';
-    const profitMargin = totalAllRevenue > 0 ? ((netProfit / totalAllRevenue) * 100).toFixed(1) : '0';
+    const cogsPercentage = totalRevenue > 0 ? ((totalCOGS / totalRevenue) * 100).toFixed(1) : '0';
+    const expensesPercentage = totalRevenue > 0 ? ((totalExpenses / totalRevenue) * 100).toFixed(1) : '0';
+    const profitMargin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : '0';
 
     const cogsEl = document.getElementById('cogsPercentage');
     const expEl = document.getElementById('expensesPercentage');
     const profitEl = document.getElementById('profitMargin');
 
-    if (cogsEl) cogsEl.textContent = `${cogsPercentage}%`;
-    if (expEl) expEl.textContent = `${expensesPercentage}%`;
-    if (profitEl) profitEl.textContent = `${profitMargin}%`;
+    if (cogsEl) cogsEl.textContent = `${cogsPercentage}% ของรายได้`;
+    if (expEl) expEl.textContent = `${expensesPercentage}% ของรายได้`;
+    if (profitEl) profitEl.textContent = `${profitMargin}% margin`;
 }
 
 // ===== UPDATE YEAR COMPARISON =====
@@ -564,7 +569,8 @@ function createChartsByYear(year) {
 function getMonthlyData(year) {
     const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
     const revenue = Array(12).fill(0);
-    const expenses = Array(12).fill(0);
+    const cogs = Array(12).fill(0);
+    const operatingExpenses = Array(12).fill(0);
 
     allEntriesCache.forEach(entry => {
         const entryDate = entry.date || '';
@@ -576,18 +582,21 @@ function getMonthlyData(year) {
         const month = parseInt(entryDate.substring(5, 7)) - 1; // 0-indexed
         if (month < 0 || month > 11) return;
 
+        const amount = parseFloat(entry.amount) || 0;
+
         if (entry.type === 'revenue') {
-            revenue[month] += parseFloat(entry.amount) || 0;
-        } else if (entry.type === 'trip') {
-            revenue[month] += parseFloat(entry.revenue) || 0;
-            expenses[month] += parseFloat(entry.fuelCost) || 0;
+            revenue[month] += amount;
         } else if (entry.type === 'expense') {
-            expenses[month] += parseFloat(entry.amount) || 0;
+            if (entry.category === 'cogs') {
+                cogs[month] += amount;
+            } else {
+                operatingExpenses[month] += amount;
+            }
         }
     });
 
-    const cogs = revenue.map(r => r * 0.85); // Estimate COGS
-    const profit = revenue.map((r, i) => r - cogs[i] - expenses[i]);
+    // Profit = Revenue - COGS - Operating Expenses
+    const profit = revenue.map((r, i) => r - cogs[i] - operatingExpenses[i]);
 
     return { labels: months, revenue, cogs, profit };
 }
@@ -603,8 +612,18 @@ function getExpensesByCategory(year) {
         if (buddhistYear !== year) return;
         if (entry.type !== 'expense') return;
 
-        const category = entry.category || 'อื่นๆ';
-        categoryTotals[category] = (categoryTotals[category] || 0) + (parseFloat(entry.amount) || 0);
+        const categoryKey = entry.category || 'other';
+        // Get readable name from CONFIG if available
+        let label = categoryKey;
+        if (typeof CATEGORIES !== 'undefined' && CATEGORIES.expense) {
+            const catConfig = CATEGORIES.expense.find(c => c.id === categoryKey);
+            if (catConfig) {
+                // Use Thai name by default, or English if preferred
+                label = catConfig.name.th || catConfig.name.en || categoryKey;
+            }
+        }
+
+        categoryTotals[label] = (categoryTotals[label] || 0) + (parseFloat(entry.amount) || 0);
     });
 
     return {
