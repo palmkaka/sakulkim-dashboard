@@ -18,13 +18,13 @@ import {
 import { Button } from "@/components/ui/button";
 
 const menuItems = [
-    { name: "Dashboard", icon: LayoutDashboard, href: "/" },
-    { name: "Sales", icon: TrendingUp, href: "/sales" },
-    { name: "Expenses", icon: CreditCard, href: "/expenses" },
-    { name: "HR", icon: Users, href: "/hr" },
-    { name: "Payroll", icon: Wallet, href: "/payroll" },
-    { name: "KPI", icon: Target, href: "/kpi" },
-    { name: "Marketing", icon: Megaphone, href: "/marketing" },
+    { name: "ภาพรวม (Overview)", icon: LayoutDashboard, href: "/" },
+    { name: "ยอดขาย (Sales)", icon: TrendingUp, href: "/sales" },
+    { name: "ค่าใช้จ่าย (Expenses)", icon: CreditCard, href: "/expenses" },
+    { name: "พนักงาน (HR)", icon: Users, href: "/hr" },
+    { name: "เงินเดือน (Payroll)", icon: Wallet, href: "/payroll" },
+    { name: "KPI แผนก", icon: Target, href: "/kpi" },
+    { name: "การตลาด (Marketing)", icon: Megaphone, href: "/marketing" },
 ];
 
 export function Sidebar() {
