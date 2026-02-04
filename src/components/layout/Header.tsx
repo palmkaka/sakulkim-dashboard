@@ -51,14 +51,14 @@ export function Header() {
                             Select data entry type
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="grid grid-cols-3 gap-4 py-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 py-4">
                         <Button
                             variant="outline"
                             className="h-24 flex flex-col items-center justify-center gap-2 hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50"
                             onClick={() => handleOpenForm("sales")}
                         >
                             <TrendingUp className="h-8 w-8" />
-                            <span className="font-semibold">ยอดขาย (Sales)</span>
+                            <span className="font-semibold text-sm text-center">ยอดขาย (Sales)</span>
                         </Button>
                         <Button
                             variant="outline"
@@ -66,7 +66,7 @@ export function Header() {
                             onClick={() => handleOpenForm("expenses")}
                         >
                             <CreditCard className="h-8 w-8" />
-                            <span className="font-semibold">ค่าใช้จ่าย (Expenses)</span>
+                            <span className="font-semibold text-sm text-center">ค่าใช้จ่าย (Expenses)</span>
                         </Button>
                         <Button
                             variant="outline"
@@ -74,7 +74,7 @@ export function Header() {
                             onClick={() => handleOpenForm("marketing")}
                         >
                             <Megaphone className="h-8 w-8" />
-                            <span className="font-semibold">การตลาด (Marketing)</span>
+                            <span className="font-semibold text-sm text-center">การตลาด (Marketing)</span>
                         </Button>
                         <Button
                             variant="outline"
@@ -82,7 +82,7 @@ export function Header() {
                             onClick={() => handleOpenForm("hr")}
                         >
                             <Users className="h-8 w-8" />
-                            <span className="font-semibold">พนักงาน (HR)</span>
+                            <span className="font-semibold text-sm text-center">พนักงาน (HR)</span>
                         </Button>
                         <Button
                             variant="outline"
@@ -90,7 +90,7 @@ export function Header() {
                             onClick={() => handleOpenForm("payroll")}
                         >
                             <Wallet className="h-8 w-8" />
-                            <span className="font-semibold">เงินเดือน (Payroll)</span>
+                            <span className="font-semibold text-sm text-center">เงินเดือน (Payroll)</span>
                         </Button>
                         <Button
                             variant="outline"
@@ -98,7 +98,7 @@ export function Header() {
                             onClick={() => handleOpenForm("kpi")}
                         >
                             <Target className="h-8 w-8" />
-                            <span className="font-semibold">KPI แผนก</span>
+                            <span className="font-semibold text-sm text-center">KPI แผนก</span>
                         </Button>
                     </div>
                 </DialogContent>
