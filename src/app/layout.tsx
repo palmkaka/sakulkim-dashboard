@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sakulkim Dashboard",
   description: "Business & HR Analytics Dashboard",
+  icons: {
+    icon: '/logo.jpg',
+  },
 };
 
 export default function RootLayout({
