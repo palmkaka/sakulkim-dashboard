@@ -61,7 +61,7 @@ export default function ClientLayout({
             <Sidebar />
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col h-full overflow-hidden">
+            <div className="flex-1 flex flex-col h-full overflow-hidden pt-20 md:pt-0">
                 {/* Header */}
                 <Header />
 

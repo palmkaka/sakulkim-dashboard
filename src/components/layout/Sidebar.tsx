@@ -42,8 +42,7 @@ export function Sidebar() {
     return (
         <>
             <div className="md:hidden fixed top-0 left-0 z-50 p-4 w-full bg-white border-b flex items-center justify-between">
-                <div className="flex items-center gap-3 font-bold text-lg">
-                    <img src="/logo.jpg" alt="Logo" className="h-8 w-8 object-contain rounded-md" />
+                <div className="flex items-center gap-3 font-bold text-xl text-indigo-900">
                     <span>Sakulkim Dashboard</span>
                 </div>
                 <Button variant="ghost" size="icon" onClick={toggleSidebar}>
