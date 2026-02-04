@@ -59,47 +59,48 @@
                             <rect x="14" y="12" width="7" height="9"></rect>
                             <rect x="3" y="16" width="7" height="5"></rect>
                         </svg>
-                        <span data-i18n="nav.dashboard">แดชบอร์ด</span>
+                        <span data-i18n="nav.dashboard">ภาพรวม (Executive)</span>
                     </a>
-                    <a href="expenses.html" class="nav-item">
+                    <a href="sales.html" class="nav-item">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="1" x2="12" y2="23"></line>
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
                         </svg>
-                        <span data-i18n="nav.expenses">ค่าใช้จ่าย</span>
+                        <span>ยอดขาย (Sales)</span>
                     </a>
-                    <a href="vehicle-trips.html" class="nav-item">
+                    <a href="hr.html" class="nav-item">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span>พนักงาน (HR)</span>
+                    </a>
+                    <a href="marketing.html" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            class="icon-sm">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
                             <path
-                                d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2">
+                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
                             </path>
-                            <circle cx="6.5" cy="16.5" r="2.5"></circle>
-                            <circle cx="16.5" cy="16.5" r="2.5"></circle>
                         </svg>
-                        <span data-i18n="nav.vehicle_trips">เที่ยวรถ</span>
+                        <span>การตลาด & KPI</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">จัดการข้อมูล</div>
-                    <a href="data-entry.html" class="nav-item" id="navDataEntry">
+                    <div class="nav-section-title">ข้อมูล</div>
+                    <a href="input.html" class="nav-item" id="navDataEntry">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
-                        <span data-i18n="nav.data_entry">เพิ่มข้อมูล</span>
-                    </a>
-                    <a href="approvals.html" class="nav-item" id="navApprovals">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="9 11 12 14 22 4"></polyline>
-                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                        </svg>
-                        <span data-i18n="nav.approvals">รออนุมัติ</span>
-                        <span class="nav-item-badge" id="pendingBadge">0</span>
+                        <span data-i18n="nav.data_entry">กรอกข้อมูล (Input)</span>
                     </a>
                 </div>
 

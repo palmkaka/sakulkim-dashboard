@@ -81,69 +81,55 @@ const PERMISSIONS = {
     canExport: true
   },
   [ROLES.CUSTOMER]: {
-    canViewDashboard: false,
-    canViewDetails: false,
+    canViewDashboard: true,
+    canViewDetails: true,
     canAddData: true,
-    canApprove: false,
-    canEdit: false,
-    canDelete: false,
-    canManageUsers: false,
-    canExport: false
+    canApprove: true,
+    canEdit: true,
+    canDelete: true,
+    canManageUsers: true,
+    canExport: true
   }
 };
 
 // Entry Categories
 const CATEGORIES = {
   revenue: [
-    { id: 'product_sales', name: { th: 'ขายสินค้า', en: 'Product Sales' } },
-    { id: 'delivery_fee', name: { th: 'ค่าจัดส่ง', en: 'Delivery Fee' } },
-    { id: 'discount_rebate', name: { th: 'รายได้เป้า/ส่วนลด', en: 'Discount/Rebate' } },
-    { id: 'other_income', name: { th: 'รายได้อื่น', en: 'Other Income' } }
+    { id: 'sales', name: { th: 'ยอดขาย', en: 'Sales' } },
+    { id: 'other_income', name: { th: 'รายได้อื่นๆ', en: 'Other Income' } }
   ],
   expense: [
-    { id: 'employee', name: { th: 'พนักงาน', en: 'Employee' } },
-    { id: 'donation', name: { th: 'บริจาคและรอมาฎอน', en: 'Donation & Ramadan' } },
-    { id: 'advertising', name: { th: 'ค่าโฆษณาและส่งเสริม', en: 'Advertising & Promotion' } },
-    { id: 'depreciation', name: { th: 'ค่าเสื่อมราคา', en: 'Depreciation' } },
-    { id: 'tax', name: { th: 'ภาษีและอากร', en: 'Tax & Duty' } },
-    { id: 'utility', name: { th: 'ค่าน้ำ ค่าไฟ', en: 'Utilities' } },
-    { id: 'fuel', name: { th: 'ค่าน้ำมัน', en: 'Fuel' } },
-    { id: 'maintenance', name: { th: 'ค่าซ่อมบำรุง', en: 'Maintenance' } },
-    { id: 'general', name: { th: 'บริการทั่วไป', en: 'General Services' } },
-    { id: 'other_expense', name: { th: 'ค่าใช้จ่ายอื่น', en: 'Other Expenses' } }
-  ],
-  trip: [
-    { id: 'delivery', name: { th: 'ส่งสินค้า', en: 'Delivery' } },
-    { id: 'pickup', name: { th: 'รับสินค้า', en: 'Pickup' } },
-    { id: 'other_trip', name: { th: 'อื่นๆ', en: 'Other' } }
+    { id: 'cogs', name: { th: 'ต้นทุนสินค้า (COGS)', en: 'Cost of Goods Sold' } },
+    { id: 'logistics', name: { th: 'ขนส่ง (Logistics)', en: 'Logistics' } },
+    { id: 'marketing', name: { th: 'การตลาด (Marketing)', en: 'Marketing' } },
+    { id: 'payroll', name: { th: 'เงินเดือนพนักงาน (Payroll)', en: 'Payroll' } },
+    { id: 'commission', name: { th: 'ค่าคอมมิชชั่น (Commission)', en: 'Commission' } },
+    { id: 'operation', name: { th: 'ดำเนินงานทั่วไป (Operation)', en: 'Operation' } },
+    { id: 'utility', name: { th: 'สาธารณูปโภค (Utility)', en: 'Utility' } },
+    { id: 'tax', name: { th: 'ภาษี (Tax)', en: 'Tax' } },
+    { id: 'other', name: { th: 'อื่นๆ', en: 'Other' } }
   ]
 };
 
-// Customer Groups (กลุ่มลูกค้า)
-const CUSTOMER_GROUPS = [
-  { id: '10', name: { th: 'กลุ่มขายหน้าร้าน', en: 'Retail Sales' }, icon: '🏪' },
-  { id: '13', name: { th: 'กลุ่มโครงการหลวง', en: 'Government Projects' }, icon: '🏛️' },
-  { id: '20', name: { th: 'บริษัทรับสร้างบ้าน', en: 'Construction Companies' }, icon: '🏗️' },
-  { id: '30', name: { th: 'ช่างผู้รับเหมาทั่วไป', en: 'General Contractors' }, icon: '👷' },
-  { id: '40', name: { th: 'งานราชการ', en: 'Government Work' }, icon: '📋' },
-  { id: '50', name: { th: 'ร้านค้าส่ง', en: 'Wholesale' }, icon: '🏭' },
-  { id: '60', name: { th: 'บ้านจัดสรร', en: 'Housing Estate' }, icon: '🏘️' }
+// Sales Channels (4 Core Channels)
+const SALES_CHANNELS = [
+  { id: 'retail', name: { th: 'หน้าร้าน', en: 'Retail' }, icon: '🏪' },
+  { id: 'wholesale', name: { th: 'ขายส่ง', en: 'Wholesale' }, icon: '🏭' },
+  { id: 'online', name: { th: 'ออนไลน์', en: 'Online' }, icon: '🌐' },
+  { id: 'project', name: { th: 'โครงการ', en: 'Project' }, icon: '🏗️' }
 ];
 
-// Product Categories (หมวดสินค้า)
-const PRODUCT_CATEGORIES = [
-  { id: 'cement', name: { th: 'ปูน ซีเมนต์ ยิปซั่ม', en: 'Cement & Gypsum' }, icon: '🧱' },
-  { id: 'steel_bar', name: { th: 'เหล็กเส้น เหล็กแผ่น', en: 'Steel Bar & Sheet' }, icon: '🔩' },
-  { id: 'steel_shape', name: { th: 'เหล็กรูปพรรณ เหล็กดำ', en: 'Structural Steel' }, icon: '⚙️' },
-  { id: 'brick', name: { th: 'อิฐ อิฐบล็อก อิฐมวลเบา', en: 'Bricks & Blocks' }, icon: '🧱' },
-  { id: 'paint', name: { th: 'สี เคมีภัณฑ์', en: 'Paint & Chemicals' }, icon: '🎨' },
-  { id: 'roof', name: { th: 'หลังคา กระเบื้อง', en: 'Roofing & Tiles' }, icon: '🏠' },
-  { id: 'pipe', name: { th: 'ท่อ อุปกรณ์ประปา', en: 'Pipes & Plumbing' }, icon: '🚿' },
-  { id: 'electrical', name: { th: 'อุปกรณ์ไฟฟ้า', en: 'Electrical' }, icon: '💡' },
-  { id: 'wood', name: { th: 'ไม้ วัสดุไม้', en: 'Wood & Lumber' }, icon: '🪵' },
-  { id: 'other', name: { th: 'อื่นๆ', en: 'Others' }, icon: '📦' }
+// HR Departments
+const DEPARTMENTS = [
+  { id: 'admin', name: { th: 'บริหาร/ธุรการ', en: 'Admin' } },
+  { id: 'sales', name: { th: 'ฝ่ายขาย', en: 'Sales' } },
+  { id: 'marketing', name: { th: 'การตลาด', en: 'Marketing' } },
+  { id: 'wh_logistics', name: { th: 'คลังสินค้า/จัดส่ง', en: 'Warehouse & Logistics' } }
 ];
 
+
+// Sales Target (Monthly)
+const SALES_TARGET = 1000000; // 1 Million Baht
 
 // Default Language
 const DEFAULT_LANG = 'th';
@@ -183,6 +169,9 @@ if (typeof module !== 'undefined' && module.exports) {
     ROLES,
     PERMISSIONS,
     CATEGORIES,
+    SALES_CHANNELS,
+    DEPARTMENTS,
+    SALES_TARGET,
     DEFAULT_LANG,
     DATE_FORMAT,
     NUMBER_FORMAT,

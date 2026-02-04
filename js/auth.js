@@ -37,7 +37,7 @@ class Auth {
                 const doc = await firebase.firestore().collection('users').doc(uid).get();
                 if (doc.exists) {
                     this.userProfile = doc.data();
-                    this.userRole = this.userProfile.role || ROLES.CUSTOMER;
+                    this.userRole = this.userProfile.role || ROLES.ADMIN;
                     return;
                 }
             }
@@ -46,17 +46,17 @@ class Auth {
             const savedProfile = localStorage.getItem(`user_${uid}`);
             if (savedProfile) {
                 this.userProfile = JSON.parse(savedProfile);
-                this.userRole = this.userProfile.role || ROLES.CUSTOMER;
+                this.userRole = this.userProfile.role || ROLES.ADMIN;
                 return;
             }
 
             // Default to customer role if no profile found
-            this.userRole = ROLES.CUSTOMER;
+            this.userRole = ROLES.ADMIN;
             this.userProfile = {
                 uid: uid,
                 email: this.user.email,
                 displayName: this.user.displayName || this.user.email.split('@')[0],
-                role: ROLES.CUSTOMER,
+                role: ROLES.ADMIN,
                 createdAt: new Date().toISOString()
             };
 
@@ -65,7 +65,7 @@ class Auth {
 
         } catch (error) {
             console.error('Error loading user profile:', error);
-            this.userRole = ROLES.CUSTOMER;
+            this.userRole = ROLES.ADMIN;
         }
     }
 
@@ -104,14 +104,14 @@ class Auth {
 
             // Check for pre-assigned role
             const preAssignedRoles = JSON.parse(localStorage.getItem('preAssignedRoles') || '{}');
-            const assignedRole = preAssignedRoles[email.toLowerCase()] || ROLES.CUSTOMER;
+            const assignedRole = preAssignedRoles[email.toLowerCase()] || ROLES.ADMIN;
 
             // Create user profile
             const profile = {
                 uid: result.user.uid,
                 email: email,
                 displayName: displayName || email.split('@')[0],
-                role: assignedRole, // Use pre-assigned role or default to customer
+                role: assignedRole, // Use pre-assigned role
                 createdAt: new Date().toISOString()
             };
 
