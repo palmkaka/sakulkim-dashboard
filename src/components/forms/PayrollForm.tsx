@@ -288,7 +288,7 @@ export function PayrollForm() {
                                     <span className="font-medium text-lg text-slate-700">ช้อมูลรายได้</span>
                                     <span className="text-sm text-slate-500">ฐานเงินเดือน: {indivBaseSalary.toLocaleString()}</span>
                                 </div>
-                                <div className="grid grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium">คอมมิชชั่น</label>
                                         <Input type="number" {...register("indivCommission")} />

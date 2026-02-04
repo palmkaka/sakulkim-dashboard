@@ -57,7 +57,7 @@ export function EmployeeMasterForm() {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">รหัสพนักงาน</label>
                                 <Input placeholder="EMP-001" {...register("employeeId", { required: true })} />
@@ -70,7 +70,7 @@ export function EmployeeMasterForm() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">แผนก (Department)</label>
                                 <Select {...register("department", { required: true })}>
@@ -88,7 +88,7 @@ export function EmployeeMasterForm() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">สถานะ (Status)</label>
                                 <Select {...register("status", { required: true })}>

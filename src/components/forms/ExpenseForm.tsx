@@ -53,7 +53,7 @@ export function ExpenseForm() {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">วันที่ (Date)</label>
                                 <Input type="date" {...register("date", { required: true })} />
