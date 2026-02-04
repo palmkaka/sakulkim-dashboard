@@ -41,8 +41,13 @@ export default function LoginPage() {
 
                 {/* Logo & Title */}
                 <div className="flex flex-col items-center mb-10">
-                    <div className="h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-blue-500/30">
-                        <Hexagon className="h-8 w-8 text-white fill-white" />
+                    <div className="mb-6 relative">
+                        <div className="absolute inset-0 bg-blue-500 blur-xl opacity-20 rounded-full"></div>
+                        <img
+                            src="/logo.jpg"
+                            alt="Logo"
+                            className="relative h-20 w-20 object-contain rounded-xl shadow-2xl"
+                        />
                     </div>
                     <h1 className="text-2xl font-bold text-white tracking-widest mb-2">
                         EVOLUTION HRD SYSTEM
