@@ -165,43 +165,41 @@ export function Header() {
             </Dialog>
 
             {/* Header Bar */}
-            <header className="flex h-16 items-center justify-end px-6 border-b bg-white">
-                <div className="flex items-center gap-4">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-indigo-600 border-indigo-200 hover:text-indigo-700 hover:bg-indigo-50"
-                        onClick={() => setIsQuickAddOpen(true)}
-                    >
-                        <Plus className="mr-2 h-4 w-4" /> เพิ่มข้อมูล
-                    </Button>
+            <header className="flex h-16 items-center justify-between md:justify-end px-4 md:px-6 border-b bg-white gap-4">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-indigo-600 border-indigo-200 hover:text-indigo-700 hover:bg-indigo-50"
+                    onClick={() => setIsQuickAddOpen(true)}
+                >
+                    <Plus className="mr-2 h-4 w-4" /> เพิ่มข้อมูล
+                </Button>
 
-                    <div className="flex items-center gap-3 border-l pl-4 ml-2">
-                        <div className="text-right hidden md:block">
-                            <p className="text-sm font-medium leading-none">
-                                {auth.currentUser?.displayName || "User"}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                                {auth.currentUser?.email || "No email"}
-                            </p>
-                        </div>
-                        <Avatar>
-                            <AvatarImage src={auth.currentUser?.photoURL || ""} alt={auth.currentUser?.displayName || "User"} />
-                            <AvatarFallback>
-                                {auth.currentUser?.displayName ? auth.currentUser.displayName.charAt(0).toUpperCase() : "U"}
-                            </AvatarFallback>
-                        </Avatar>
-                        {/* Add Sign Out Button for convenience */}
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => auth.signOut()}
-                            className="text-gray-400 hover:text-red-500"
-                            title="Sign Out"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
-                        </Button>
+                <div className="flex items-center gap-3 md:border-l md:pl-4">
+                    <div className="text-right hidden md:block">
+                        <p className="text-sm font-medium leading-none">
+                            {auth.currentUser?.displayName || "User"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                            {auth.currentUser?.email || "No email"}
+                        </p>
                     </div>
+                    <Avatar>
+                        <AvatarImage src={auth.currentUser?.photoURL || ""} alt={auth.currentUser?.displayName || "User"} />
+                        <AvatarFallback>
+                            {auth.currentUser?.displayName ? auth.currentUser.displayName.charAt(0).toUpperCase() : "U"}
+                        </AvatarFallback>
+                    </Avatar>
+                    {/* Add Sign Out Button for convenience */}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => auth.signOut()}
+                        className="text-gray-400 hover:text-red-500"
+                        title="Sign Out"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
+                    </Button>
                 </div>
             </header>
         </>
